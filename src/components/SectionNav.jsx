@@ -1,117 +1,84 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-/* The case study's section navigator.
+/* The case study's section index.
 
-   The story is one continuous read in two parts — the summary and the full
-   process — so the rail carries both, grouped, with its numbering restarting
-   per group. At rest it is a narrow pill: a continuous line with a soft dot per
-   section and one filled circle carrying the current number, which travels down
-   as you read. Hovering (or focusing) widens the pill to show the labels and
-   the group headings; the rail itself never moves.
+   At rest it is a column of dots in the left margin — small enough to live in
+   a narrow gutter, so it survives on a laptop screen. Hovering (or focusing)
+   expands it leftward into a labelled panel; the dots themselves hold their
+   place, so nothing jumps under the pointer.
 
-   It sticks inside the content wrapper, so it travels with the story and stops
-   where the story stops. */
+   Below the width where a gutter exists at all, it collapses to a sheet. */
 
 const EASE = [0.22, 1, 0.36, 1];
-const SPRING = { type: "spring", stiffness: 380, damping: 32 };
 
 function num(i) {
   return String(i + 1).padStart(2, "0");
 }
 
-/* ---- desktop ---- */
+/* ---- wide screens: a dot rail that opens on hover ---- */
 
-function Rail({ groups, activeUid, onJump, reduce }) {
+function Rail({ sections, activeId, onJump, ready, numbered }) {
   return (
-    // Top starts at the first section, not the wrapper's padding, so the rail
-    // can never climb above the heading that sits over the first section.
-    <nav aria-label="Sections" className="pointer-events-none absolute bottom-0 left-0 top-14 z-30 hidden lg:block">
-      {/* A viewport-tall sticky box centres the rail without a transform —
-          a translate would let it overshoot the top of this container. */}
-      <div className="sticky top-0 flex h-svh items-center">
-        <div className="group pointer-events-auto -translate-x-[52px] xl:-translate-x-[76px]">
-          <div className="relative flex max-h-[78svh] w-10 flex-col overflow-y-auto overflow-x-hidden rounded-[20px] border border-border/60 bg-cream/70 py-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)] backdrop-blur-[2px] transition-[width,border-radius] duration-300 ease-out group-hover:w-[212px] group-hover:rounded-2xl group-focus-within:w-[212px] group-focus-within:rounded-2xl motion-reduce:transition-none">
-            {/* one continuous line, behind the markers */}
-            <span aria-hidden="true" className="absolute left-5 top-[28px] bottom-[28px] w-[2px] -translate-x-1/2 bg-ink-primary/12" />
-
-            {groups.map((group, g) => (
-              <ul key={group.id} className={g > 0 ? "mt-1.5" : undefined}>
-                {/* The group's name only has room once the rail is open. */}
-                <li
-                  aria-hidden="true"
-                  className="type-label relative h-0 overflow-hidden whitespace-nowrap pl-10 uppercase tracking-[0.2em] text-ink-subtle opacity-0 transition-[height,opacity,margin] duration-200 group-hover:mb-1 group-hover:h-4 group-hover:opacity-100 group-focus-within:mb-1 group-focus-within:h-4 group-focus-within:opacity-100"
+    <nav
+      aria-label="Sections"
+      aria-hidden={ready ? undefined : "true"}
+      /* The collapsed rail is 34px, so it only needs ~54px of gutter and
+         appears from about 1120px. The expanded panel grows to the right of
+         the dots into the same gutter plus a little of the page margin, which
+         is empty at these widths. It fades in once the story starts, so it is
+         never over the hero. */
+      /* Pinned to the gutter beside the 1000px column, but never closer than
+         12px to the window edge — so it survives on a narrow laptop window
+         instead of disappearing, which is what kept happening. */
+      className={`fixed left-[max(12px,calc(50%-548px))] top-1/2 z-30 hidden -translate-y-1/2 transition-opacity duration-300 min-[1000px]:block motion-reduce:transition-none ${
+        ready ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+    >
+      <ul className="group/rail flex w-[34px] flex-col gap-0.5 rounded-2xl border border-transparent py-2 transition-[width,background-color,border-color,box-shadow,padding] duration-300 ease-out hover:w-[186px] hover:border-border/70 hover:bg-cream/85 hover:px-1.5 hover:shadow-[0_8px_24px_rgba(24,32,30,0.08)] hover:backdrop-blur-[2px] focus-within:w-[186px] focus-within:border-border/70 focus-within:bg-cream/85 focus-within:px-1.5 focus-within:shadow-[0_8px_24px_rgba(24,32,30,0.08)] motion-reduce:transition-none">
+        {sections.map((section, i) => {
+          const active = section.id === activeId;
+          return (
+            <li key={section.id}>
+              <button
+                type="button"
+                aria-current={active ? "true" : undefined}
+                onClick={() => onJump(section.id)}
+                title={section.navLabel ?? section.title}
+                className="group/row relative flex h-8 w-full items-center rounded-lg text-left transition-colors hover:bg-sage-pale/70"
+              >
+                <span className="grid h-8 w-[22px] shrink-0 place-items-center">
+                  <span
+                    className={`rounded-full transition-all duration-200 group-hover/row:scale-125 ${
+                      active ? "h-[7px] w-[7px] bg-ink-primary" : "h-[6px] w-[6px] border border-ink-primary/40 bg-transparent"
+                    }`}
+                  />
+                </span>
+                {/* The label only exists once the rail is open; it is kept in
+                    the DOM (not conditionally rendered) so screen readers and
+                    the keyboard always have it. */}
+                <span
+                  className={`min-w-0 overflow-hidden whitespace-nowrap text-[13px] leading-[18px] opacity-0 transition-opacity duration-200 group-hover/rail:opacity-100 group-focus-within/rail:opacity-100 ${
+                    active ? "font-medium text-ink-primary" : "text-ink-secondary"
+                  }`}
                 >
-                  {group.label}
-                </li>
-
-                <AnimatePresence initial={false}>
-                  {group.sections.map((section, i) => {
-                    const active = section.uid === activeUid;
-                    return (
-                      <motion.li
-                        key={section.uid}
-                        layout={!reduce}
-                        initial={reduce ? false : { opacity: 0, height: 0 }}
-                        animate={reduce ? {} : { opacity: 1, height: "auto" }}
-                        exit={reduce ? {} : { opacity: 0, height: 0 }}
-                        transition={{ duration: 0.26, ease: EASE }}
-                        className="overflow-hidden"
-                      >
-                        <button
-                          type="button"
-                          aria-current={active ? "true" : undefined}
-                          onClick={() => onJump(section.uid)}
-                          className="relative flex h-11 w-[204px] items-center text-left"
-                        >
-                          {/* the active row's ground, only once the labels are out */}
-                          {active && (
-                            <motion.span
-                              layoutId="rail-row"
-                              transition={reduce ? { duration: 0 } : SPRING}
-                              className="absolute inset-y-0.5 left-1 right-1 rounded-xl bg-[#E6EFE7] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
-                            />
-                          )}
-                          <span className="relative grid h-11 w-10 shrink-0 place-items-center">
-                            {active ? (
-                              <motion.span
-                                layoutId="rail-active"
-                                transition={reduce ? { duration: 0 } : SPRING}
-                                className="type-label grid h-9 w-9 place-items-center rounded-full bg-ink-primary tabular-nums text-surface"
-                              >
-                                {num(i)}
-                              </motion.span>
-                            ) : (
-                              <span className="h-3 w-3 rounded-full border border-ink-primary/20 bg-surface/70" />
-                            )}
-                          </span>
-                          <span
-                            className={`type-body-s relative whitespace-nowrap pr-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 ${
-                              active ? "font-semibold text-ink-primary" : "text-ink-secondary"
-                            }`}
-                          >
-                            {section.navLabel ?? section.title}
-                          </span>
-                        </button>
-                      </motion.li>
-                    );
-                  })}
-                </AnimatePresence>
-              </ul>
-            ))}
-          </div>
-        </div>
-      </div>
+                  {numbered && <span className="mr-2 tabular-nums text-ink-subtle">{num(i)}</span>}
+                  {section.navLabel ?? section.title}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }
 
-/* ---- small screens: a pill that opens a sheet ---- */
+/* ---- narrower: a pill that opens a sheet ---- */
 
-function Sheet({ groups, activeUid, onJump, reduce }) {
+function Sheet({ sections, activeId, onJump, reduce, numbered }) {
   const [open, setOpen] = useState(false);
-  const flat = groups.flatMap((g) => g.sections);
-  const activeIndex = Math.max(0, flat.findIndex((s) => s.uid === activeUid));
+  const activeIndex = Math.max(0, sections.findIndex((s) => s.id === activeId));
 
   useEffect(() => {
     if (!open) return undefined;
@@ -121,14 +88,17 @@ function Sheet({ groups, activeUid, onJump, reduce }) {
   }, [open]);
 
   return (
-    <div className="lg:hidden">
+    <div className="min-[1000px]:hidden">
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
-        className="type-body-s fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 font-medium text-ink-primary shadow-[0_2px_6px_rgba(24,32,30,0.08),0_16px_32px_-18px_rgba(24,32,30,0.4)]"
+        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-[13px] font-medium text-ink-primary shadow-[0_2px_6px_rgba(24,32,30,0.08),0_16px_32px_-18px_rgba(24,32,30,0.4)]"
       >
-        <span className="type-label grid h-6 w-6 place-items-center rounded-full bg-ink-primary tabular-nums text-surface">{num(activeIndex)}</span>
+        {/* Unnumbered studies get the rail's dot rather than a hollow ring. */}
+        <span className="grid h-6 w-6 place-items-center rounded-full bg-ink-primary text-[11px] tabular-nums text-surface">
+          {numbered ? num(activeIndex) : <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-surface" />}
+        </span>
         Sections
       </button>
 
@@ -156,48 +126,47 @@ function Sheet({ groups, activeUid, onJump, reduce }) {
             >
               <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-border" />
               <div className="flex items-center justify-between px-5 py-3">
-                <span className="type-label uppercase tracking-[0.2em] text-ink-subtle">Sections</span>
-                <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="type-body-s px-2 text-ink-secondary">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-ink-subtle">Sections</span>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="px-2 text-[13px] text-ink-secondary">
                   ✕
                 </button>
               </div>
-
-              <div className="max-h-[60svh] overflow-y-auto px-3 pb-2">
-                {groups.map((group) => (
-                  <div key={group.id} className="mb-2">
-                    <p className="type-label px-2.5 pb-1.5 pt-2 uppercase tracking-[0.2em] text-ink-subtle">{group.label}</p>
-                    <ul>
-                      {group.sections.map((section, i) => {
-                        const active = section.uid === activeUid;
-                        return (
-                          <li key={section.uid}>
-                            <button
-                              type="button"
-                              aria-current={active ? "true" : undefined}
-                              onClick={() => {
-                                setOpen(false);
-                                onJump(section.uid);
-                              }}
-                              className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-3 text-left ${active ? "bg-[#E6EFE7]" : ""}`}
-                            >
-                              <span
-                                className={`type-label grid h-7 w-7 shrink-0 place-items-center rounded-full tabular-nums ${
-                                  active ? "bg-ink-primary text-surface" : "border border-border text-ink-subtle"
-                                }`}
-                              >
-                                {num(i)}
-                              </span>
-                              <span className={`type-body-s ${active ? "font-semibold text-ink-primary" : "text-ink-secondary"}`}>
-                                {section.navLabel ?? section.title}
-                              </span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              <ul className="max-h-[60svh] overflow-y-auto px-3 pb-2">
+                {sections.map((section, i) => {
+                  const active = section.id === activeId;
+                  return (
+                    <li key={section.id}>
+                      <button
+                        type="button"
+                        aria-current={active ? "true" : undefined}
+                        onClick={() => {
+                          setOpen(false);
+                          onJump(section.id);
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-3 text-left ${active ? "bg-[#E6EFE7]" : ""}`}
+                      >
+                        <span
+                          className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[11px] tabular-nums ${
+                            active ? "bg-ink-primary text-surface" : "border border-border text-ink-subtle"
+                          }`}
+                        >
+                          {numbered ? (
+                            num(i)
+                          ) : (
+                            <span
+                              aria-hidden="true"
+                              className={`h-1.5 w-1.5 rounded-full ${active ? "bg-surface" : "bg-ink-primary/40"}`}
+                            />
+                          )}
+                        </span>
+                        <span className={`text-[13px] ${active ? "font-medium text-ink-primary" : "text-ink-secondary"}`}>
+                          {section.navLabel ?? section.title}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             </motion.div>
           </>
         )}
@@ -206,11 +175,11 @@ function Sheet({ groups, activeUid, onJump, reduce }) {
   );
 }
 
-export default function SectionNav({ groups, activeUid, onJump, reduce }) {
+export default function SectionNav({ sections, activeId, onJump, reduce, ready = true, numbered = true }) {
   return (
     <>
-      <Rail groups={groups} activeUid={activeUid} onJump={onJump} reduce={reduce} />
-      <Sheet groups={groups} activeUid={activeUid} onJump={onJump} reduce={reduce} />
+      <Rail sections={sections} activeId={activeId} onJump={onJump} ready={ready} numbered={numbered} />
+      <Sheet sections={sections} activeId={activeId} onJump={onJump} reduce={reduce} numbered={numbered} />
     </>
   );
 }

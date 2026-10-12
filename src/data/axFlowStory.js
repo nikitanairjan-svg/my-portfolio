@@ -1,198 +1,148 @@
-import { axFlowBg } from "../assets";
+import { axFlowHeroCover } from "../assets";
 
-/* AX Flow.
+/* AX Flow — the same ten sections as the written-up studies, in the same order:
+   at-a-glance, one break into Process, then what it taught.
 
-   The structure is in place; the writing is not. Section ids match the other
-   studies so switching between the two readings lands on the matching section
-   rather than jumping to the top. */
+   The structure is in place; the writing is not, and there are no product
+   images yet. Sections that would carry a carousel or a screenshot keep their
+   copy alone rather than being padded with placeholder art. */
 
 export const axFlowStory = {
+  // the finished cover: scene and typography composed together, shown as-is
+  heroLayout: "composite",
   cover: {
-    src: axFlowBg,
-    alt: "A bright desk with HR handbooks, notes and a laptop",
-    w: 1672,
-    h: 940,
+    src: axFlowHeroCover,
+    alt: "AX Flow open on a phone beside a notebook, showing a conversational time-off request",
+    w: 1983,
+    h: 793,
   },
-  tagline: "An AI assistant for HR conversations, simplifying how employees ask for help and get it.",
+  tagline:
+    "A conversational AI assistant within the HRMS platform that helps employees quickly find information and complete HR tasks, such as applying for time off, by guiding them through step-by-step flows.",
   meta: [
     ["Domain", "HR Tech"],
-    ["Type", "AI Experience"],
+    ["Type", "Enterprise SaaS"],
     ["Role", "Product Designer"],
   ],
 
-  views: [
+  sections: [
     {
-      id: "glance",
-      label: "Quick View",
-      note: "1–2 min read",
-      sections: [
+      id: "summary",
+      navLabel: "Summary",
+      title: "Project Summary",
+      blocks: [
+        { type: "note", text: "This case study is still being written. The structure is in place; the content and screens will follow." },
         {
-          id: "overview",
-          navLabel: "Overview",
-          title: "Overview",
-          blocks: [
-            { type: "note", text: "This case study is still being written. The structure below is in place and the content will be replaced." },
-            {
-              type: "lead",
-              text: "AX Flow is an AI-powered HR assistant that lets employees get support through ordinary conversation instead of navigating a portal.",
-            },
-            {
-              type: "text",
-              text: "The platform answers routine HR enquiries, reduces the volume of support tickets reaching the HR team, and gives employees a faster way to resolve the questions that come up through the year.",
-            },
+          type: "text",
+          text: "AX Flow is an AI-powered HR assistant that lets employees get support through ordinary conversation instead of navigating a portal. It answers routine enquiries and reduces the volume reaching the HR team.",
+        },
+      ],
+    },
+    {
+      id: "product",
+      navLabel: "The product",
+      title: "Let's understand the product",
+      standfirst: "An assistant that sits where the questions already get asked.",
+      blocks: [
+        {
+          type: "text",
+          text: "Employees ask about leave, benefits, policy and payroll in their own words. The assistant answers from the systems that hold the real data, and escalates to a person when the question needs one.",
+        },
+      ],
+    },
+    {
+      id: "problem",
+      navLabel: "Problem",
+      title: "Problem",
+      standfirst: "Getting a straight answer took far longer than the question deserved.",
+      blocks: [
+        {
+          type: "list",
+          items: [
+            "Complex portals and documentation for routine answers",
+            "HR absorbing a steady volume of repetitive enquiries",
+            "No instant path to information outside working hours",
+            "Email chains making simple requests slow to resolve",
           ],
         },
+      ],
+    },
+    {
+      id: "solution",
+      navLabel: "Solution",
+      title: "Solution",
+      blocks: [
         {
-          id: "problem",
-          navLabel: "Problem",
-          title: "The Problem",
-          blocks: [
-            { type: "lead", text: "Getting a straight answer out of an HR system took far longer than the question deserved." },
-            {
-              type: "list",
-              items: [
-                "Employees had to navigate complex portals and documentation to find routine answers",
-                "HR teams were absorbing a steady volume of repetitive enquiries",
-                "There was no instant path to information outside working hours",
-                "Email chains made simple requests slow and easy to lose",
-              ],
-            },
+          type: "list",
+          marker: "check",
+          items: [
+            "Natural language questions instead of forms and menus",
+            "Real-time answers to the enquiries that come up most",
+            "Integration with the HR systems holding the data",
+            "A clean handover to a person when one is needed",
           ],
         },
+        { type: "status", text: "Content in progress" },
+      ],
+    },
+    {
+      id: "features",
+      navLabel: "Main features",
+      title: "Main Features",
+      blocks: [
         {
-          id: "solution",
-          navLabel: "Solution",
-          title: "The Solution",
-          blocks: [
-            { type: "lead", text: "A conversational interface that answers in plain language and knows when to step aside." },
-            {
-              type: "list",
-              items: [
-                "Natural language queries instead of forms and menus",
-                "Real-time answers to the questions that come up most",
-                "Integration with the HR systems that hold the real data",
-                "A clean handoff to a human when the question needs one",
-              ],
-            },
-          ],
-        },
-        {
-          id: "decisions",
-          navLabel: "Key decisions",
-          title: "Key Design Decisions",
-          blocks: [
-            {
-              type: "cards",
-              items: [
-                { title: "Conversation over forms", text: "Asking in your own words beats finding the right field on the right screen." },
-                { title: "Transparency in AI answers", text: "The assistant shows where an answer came from, so it can be trusted or questioned." },
-                { title: "Clear escalation paths", text: "A visible, unembarrassing route to a person — never a dead end." },
-                { title: "Mobile-first", text: "Most of these questions get asked away from a desk." },
-              ],
-            },
-          ],
-        },
-        {
-          id: "outcome",
-          navLabel: "Outcome",
-          title: "Outcome & Reflection",
-          blocks: [
-            { type: "lead", text: "Early results point at a meaningful drop in routine support load, with the detail still being gathered." },
-            { type: "status", text: "Outcome metrics to be confirmed" },
+          type: "cards",
+          items: [
+            { title: "Conversation over forms", text: "Asking in your own words beats hunting for the right field." },
+            { title: "Transparency in answers", text: "The assistant shows where an answer came from." },
+            { title: "Clear escalation", text: "A visible, unembarrassing route to a person." },
+            { title: "Mobile-first", text: "Most of these questions get asked away from a desk." },
           ],
         },
       ],
     },
 
     {
-      id: "full",
-      label: "Full process",
-      note: "Comprehensive",
-      sections: [
+      id: "research",
+      navLabel: "Research",
+      title: "User Research",
+      part: "process",
+      blocks: [{ type: "text", text: "To be written: interviews, ticket analysis, and the questions that came up most often." }],
+    },
+    {
+      id: "discovery",
+      navLabel: "Discovery",
+      title: "Discovery & Brainstorming",
+      blocks: [
         {
-          id: "overview",
-          navLabel: "Overview",
-          title: "Overview",
-          blocks: [
-            { type: "note", text: "This case study is still being written. The structure below is in place and the content will be replaced." },
-            { type: "lead", text: "An AI assistant for HR, built so employees can ask a question the way they would ask a colleague." },
-            {
-              type: "facts",
-              items: [
-                ["Users", "Employees, HR partners, support leads"],
-                ["My role", "Product Designer"],
-                ["Scope", "Conversational flows, escalation, mobile experience"],
-                ["Platform", "Mobile-first web and app"],
-              ],
-            },
+          type: "insightCards",
+          items: [
+            { title: "Ask, don't navigate", text: "Your own words beat finding the right field on the right screen." },
+            { title: "Show the source", text: "An answer you can check is an answer you can trust." },
+            { title: "Never a dead end", text: "A visible, unembarrassing route to a person." },
           ],
         },
-        {
-          id: "context",
-          navLabel: "Context",
-          title: "Context & Problem",
-          blocks: [
-            { type: "lead", text: "The existing route to an answer was a portal, a document library and an email thread." },
-            { type: "text", text: "To be written: the before-state, where time was lost, and what that cost both employees and the HR team." },
-          ],
-        },
-        {
-          id: "research",
-          navLabel: "Research",
-          title: "Research & Discovery",
-          blocks: [
-            { type: "lead", text: "To be written: interviews, ticket analysis and the questions that came up most often." },
-          ],
-        },
-        {
-          id: "insights",
-          navLabel: "Insights",
-          title: "Insights & Direction",
-          blocks: [
-            { type: "lead", text: "To be written: what the research changed about the direction." },
-          ],
-        },
-        {
-          id: "exploration",
-          navLabel: "Exploration",
-          title: "Exploration & Ideation",
-          blocks: [
-            { type: "lead", text: "To be written: the directions explored for the conversation model and why one was chosen." },
-          ],
-        },
-        {
-          id: "design-decisions",
-          navLabel: "Decisions",
-          title: "Design Decisions",
-          blocks: [
-            {
-              type: "cards",
-              items: [
-                { title: "Conversation over forms", text: "Asking in your own words beats finding the right field on the right screen." },
-                { title: "Transparency in AI answers", text: "The assistant shows where an answer came from, so it can be trusted or questioned." },
-                { title: "Clear escalation paths", text: "A visible, unembarrassing route to a person — never a dead end." },
-                { title: "Mobile-first", text: "Most of these questions get asked away from a desk." },
-              ],
-            },
-          ],
-        },
-        {
-          id: "final",
-          navLabel: "Final design",
-          title: "Final Experience",
-          blocks: [
-            { type: "lead", text: "To be written: the end-to-end walkthrough, from question to resolution." },
-          ],
-        },
-        {
-          id: "outcome",
-          navLabel: "Outcome",
-          title: "Outcome & Reflection",
-          blocks: [
-            { type: "lead", text: "To be written: measured impact and what the project taught about designing around an AI that has to admit what it does not know." },
-            { type: "status", text: "Outcome metrics to be confirmed" },
-          ],
-        },
+      ],
+    },
+    {
+      id: "wireframes",
+      navLabel: "Wireframes",
+      title: "UX Wireframes",
+      blocks: [{ type: "text", text: "To be written: the conversation model explored in wireframes before any UI." }],
+    },
+    {
+      id: "ui",
+      navLabel: "UI screens",
+      title: "UI Screens",
+      blocks: [{ type: "text", text: "To be written: the final interface, once the screens are ready to show." }],
+    },
+    {
+      id: "learned",
+      navLabel: "What I learned",
+      title: "What I Learned",
+      accent: true,
+      blocks: [
+        { type: "text", text: "To be written: measured impact, and what the project taught about designing around an AI that has to admit what it does not know." },
+        { type: "status", text: "Outcome metrics to be confirmed" },
       ],
     },
   ],

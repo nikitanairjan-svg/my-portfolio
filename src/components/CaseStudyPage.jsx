@@ -102,7 +102,7 @@ function OutlinePage({ study, next, onBack }) {
 
         <Section label="Overview" title="Context">
           <Placeholder>
-            Placeholder: introduce {study.title} here — who the product is for, what it helps them do, and where it sits in the
+            Placeholder: introduce {study.title} here: who the product is for, what it helps them do, and where it sits in the
             business.
           </Placeholder>
         </Section>

@@ -28,6 +28,7 @@ export { default as travelUdaipur } from "./travel/travel-udaipur.webp";
 
 // Case studies (optimized WebP versions)
 export { default as axFlowBg } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-bg-opt.webp";
+export { default as axFlowHeroCover } from "../../portfolio-assets/case-studies/ax-flow/hero-cover-opt.webp";
 export { default as axFlowVisual1 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual1-opt.webp";
 export { default as axFlowVisual2 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual2-opt.webp";
 export { default as shipthisBg } from "../../portfolio-assets/case-studies/shipthis/shipthis-bg-opt.webp";
@@ -38,28 +39,23 @@ export { default as bloomCraftBg } from "../../portfolio-assets/case-studies/blo
 export { default as bloomCraftVisual } from "../../portfolio-assets/case-studies/bloom-craft/bloom-craft-visual-opt.webp";
 
 // Shipthis case study detail page (optimized from the Notion export).
-export { default as shipthisCover } from "../../portfolio-assets/case-studies/shipthis/detail/cover-opt.webp";
-export { default as shipthisSketch1 } from "../../portfolio-assets/case-studies/shipthis/detail/sketch-1-opt.webp";
-export { default as shipthisSketch2 } from "../../portfolio-assets/case-studies/shipthis/detail/sketch-2-opt.webp";
-export { default as shipthisSketch3 } from "../../portfolio-assets/case-studies/shipthis/detail/sketch-3-opt.webp";
-export { default as shipthisSketch4 } from "../../portfolio-assets/case-studies/shipthis/detail/sketch-4-opt.webp";
-export { default as shipthisWireRateSearch } from "../../portfolio-assets/case-studies/shipthis/detail/wire-rate-search-opt.webp";
-export { default as shipthisWireDocuments } from "../../portfolio-assets/case-studies/shipthis/detail/wire-documents-opt.webp";
-export { default as shipthisWireDetails } from "../../portfolio-assets/case-studies/shipthis/detail/wire-details-opt.webp";
-export { default as shipthisWireMap } from "../../portfolio-assets/case-studies/shipthis/detail/wire-map-opt.webp";
-export { default as shipthisUiRateSearch } from "../../portfolio-assets/case-studies/shipthis/detail/ui-rate-search-opt.webp";
-export { default as shipthisUiDetails } from "../../portfolio-assets/case-studies/shipthis/detail/ui-details-opt.webp";
-export { default as shipthisUiCompare } from "../../portfolio-assets/case-studies/shipthis/detail/ui-compare-opt.webp";
-export { default as shipthisUiMap } from "../../portfolio-assets/case-studies/shipthis/detail/ui-map-opt.webp";
-export { default as shipthisUiDocuments } from "../../portfolio-assets/case-studies/shipthis/detail/ui-documents-opt.webp";
-export { default as shipthisUiMessages } from "../../portfolio-assets/case-studies/shipthis/detail/ui-messages-opt.webp";
-export { default as shipthisResearchTimeline } from "../../portfolio-assets/case-studies/shipthis/detail/research-timeline-opt.webp";
 // The hero scene: the reference composite with the real Rate Search screen
 // warped onto the laptop and the baked-in text removed (text is live HTML).
+export { default as shipthisForwarderFlow } from "../../portfolio-assets/case-studies/shipthis/detail/forwarder-flow-opt.webp";
 export { default as shipthisHeroScene } from "../../portfolio-assets/case-studies/shipthis/detail/hero-scene-opt.webp";
+// the finished covers: scene + typography, composed by the designer
+export { default as shipthisHeroCover } from "../../portfolio-assets/case-studies/shipthis/detail/hero-cover-opt.webp";
+export { default as hcHeroCover } from "../../portfolio-assets/case-studies/hc-robotics/detail/hero-cover-opt.webp";
+export { default as bloomCraftHeroCover } from "../../portfolio-assets/case-studies/bloom-craft/hero-cover-opt.webp";
+// cut from the app's own artwork, for the call to action
+export { default as bloomRose } from "../../portfolio-assets/case-studies/bloom-craft/blooms/rose.webp";
+export { default as bloomHydrangea } from "../../portfolio-assets/case-studies/bloom-craft/blooms/hydrangea.webp";
+export { default as bloomTulip } from "../../portfolio-assets/case-studies/bloom-craft/blooms/tulip.webp";
+export { default as bloomSunflower } from "../../portfolio-assets/case-studies/bloom-craft/blooms/sunflower.webp";
+export { default as bloomCluster } from "../../portfolio-assets/case-studies/bloom-craft/blooms/cluster.webp";
+export { default as bloomFern } from "../../portfolio-assets/case-studies/bloom-craft/blooms/fern.webp";
 // The freight-forwarder journey, supplied as artwork with its ground keyed out
 // so it sits directly on the section.
-export { default as shipthisForwarderFlow } from "../../portfolio-assets/case-studies/shipthis/detail/forwarder-flow-opt.webp";
 
 // Contact section artwork, built from contact-bg.png by scripts/build-contact-art.py
 export { default as contactBoard } from "../../portfolio-assets/contact/contact-board-opt.webp";
@@ -68,8 +64,7 @@ export { default as contactTiles } from "../../portfolio-assets/contact/contact-
 export { default as contactClips } from "../../portfolio-assets/contact/contact-clips-opt.webp";
 
 // HC Robotics case study detail page (optimized from the Notion export).
-export { default as hcLidarCover } from "../../portfolio-assets/case-studies/hc-robotics/detail/cover-opt.webp";
-export { default as hcWorkflow } from "../../portfolio-assets/case-studies/hc-robotics/detail/workflow-opt.webp";
+export { default as hcWorkflow } from "../../portfolio-assets/case-studies/hc-robotics/detail/workflow-trim-opt.webp";
 export { default as hcFeatureToolbox } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-toolbox-opt.webp";
 export { default as hcFeatureLayouts } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-layouts-opt.webp";
 export { default as hcFeatureMagnify } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-magnify-opt.webp";
@@ -81,9 +76,45 @@ export { default as hcWire1 } from "../../portfolio-assets/case-studies/hc-robot
 export { default as hcWire2 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-2-opt.webp";
 export { default as hcWire3 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-3-opt.webp";
 export { default as hcWire4 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-4-opt.webp";
+export { default as hcWire5 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-5-opt.webp";
+export { default as hcWire6 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-6-opt.webp";
+export { default as hcWire7 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-7-opt.webp";
+export { default as hcWire8 } from "../../portfolio-assets/case-studies/hc-robotics/detail/wire-8-opt.webp";
 export { default as hcUi1 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-1-opt.webp";
 export { default as hcUi2 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-2-opt.webp";
 export { default as hcUi3 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-3-opt.webp";
 export { default as hcUi4 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-4-opt.webp";
 export { default as hcUi5 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-5-opt.webp";
+export { default as hcUi6 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-6-opt.webp";
 export { default as hcUi7 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-7-opt.webp";
+export { default as hcUi8 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-8-opt.webp";
+export { default as hcUi9 } from "../../portfolio-assets/case-studies/hc-robotics/detail/ui-9-opt.webp";
+// the Notion export ships this feature as a GIF; kept animated, like ShipThis's two loops
+export { default as hcFeatureLayoutsLoop } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-layouts-loop.webp";
+
+// ShipThis detail images, named for the sections of the Notion write-up.
+export { default as stFeatAiCompare } from "../../portfolio-assets/case-studies/shipthis/detail/feat-ai-compare-opt.webp";
+export { default as stFeatBulk } from "../../portfolio-assets/case-studies/shipthis/detail/feat-bulk-opt.webp";
+export { default as stSk1 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-1-opt.webp";
+export { default as stSk2 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-2-opt.webp";
+export { default as stSk3 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-3-opt.webp";
+export { default as stSk4 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-4-opt.webp";
+export { default as stSk5 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-5-opt.webp";
+export { default as stSk6 } from "../../portfolio-assets/case-studies/shipthis/detail/sk-6-opt.webp";
+export { default as stWf1 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-1-opt.webp";
+export { default as stWf2 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-2-opt.webp";
+export { default as stWf3 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-3-opt.webp";
+export { default as stWf4 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-4-opt.webp";
+export { default as stWf5 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-5-opt.webp";
+export { default as stWf6 } from "../../portfolio-assets/case-studies/shipthis/detail/wf-6-opt.webp";
+export { default as stSc1 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-1-opt.webp";
+export { default as stSc2 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-2-opt.webp";
+export { default as stSc3 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-3-opt.webp";
+export { default as stSc4 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-4-opt.webp";
+export { default as stSc5 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-5-opt.webp";
+export { default as stSc6 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-6-opt.webp";
+export { default as stSc7 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-7-opt.webp";
+export { default as stSc8 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-8-opt.webp";
+export { default as stSc9 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-9-opt.webp";
+export { default as stFeatMapQuoteLoop } from "../../portfolio-assets/case-studies/shipthis/detail/feat-map-quote-loop.webp";
+export { default as stFeatViewsLoop } from "../../portfolio-assets/case-studies/shipthis/detail/feat-views-loop.webp";

@@ -3,10 +3,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-display: "Poppins", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-hand: "Caveat", cursive;
-  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-serif: "Poppins", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-note: "Shadows Into Light", "Caveat", cursive;
 
   /* Design system (case studies onward) */
@@ -220,7 +220,7 @@ body {
 /* Design system type scale. Sizes step down below the lg breakpoint. */
 @utility type-display {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 600;
   font-size: 48px;
   line-height: 52px;
   @media (width >= 64rem) {
@@ -230,7 +230,7 @@ body {
 }
 @utility type-h2 {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 600;
   font-size: 38px;
   line-height: 44px;
   @media (width >= 64rem) {

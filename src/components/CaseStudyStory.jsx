@@ -1,8 +1,14 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import SectionNav from "./SectionNav";
 import BrowseProjects from "./BrowseProjects";
-import { WORLD_PATH } from "./worldPath";
+import Carousel from "./Carousel";
+import Lightbox from "./Lightbox";
+import ImageSet from "./ImageSet";
+import ForwarderFlow from "./ForwarderFlow";
+import LidarFlow from "./LidarFlow";
+import CtaFlowers from "./CtaFlowers";
+import ResearchTimeline from "./ResearchTimeline";
 
 /* A case study as one continuous read: the cover, then the summary, then the
    full process, then the other projects. A floating index tracks the section
@@ -19,24 +25,6 @@ function Bullet({ marker }) {
   // for the dot and the line sits against it.
   if (marker === "quote") return <span aria-hidden="true" className="mt-1.5 w-0.5 shrink-0 self-stretch rounded-full bg-forest/35" />;
   return <span aria-hidden="true" className="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-full bg-forest/55" />;
-}
-
-function Figure({ src, alt, caption, w, h, className = "" }) {
-  return (
-    <figure className={className}>
-      <img
-        src={src}
-        alt={alt}
-        width={w}
-        height={h}
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-        className="w-full rounded-2xl border border-border bg-surface object-cover shadow-[0_1px_2px_rgba(24,32,30,0.04),0_18px_40px_-28px_rgba(24,32,30,0.25)]"
-      />
-      {caption && <figcaption className="type-body-s mt-3 text-ink-secondary">{caption}</figcaption>}
-    </figure>
-  );
 }
 
 /* Copy carries two emphasis markers: **bold** for the phrases that matter, and
@@ -69,120 +57,6 @@ function Rich({ text, className = "" }) {
   );
 }
 
-/* The freight modes, placed on the world and joined in order. Positions are
-   given in the map's own coordinates (equirectangular, 1000x500) so the chips,
-   the route and the land can never drift apart; the chip percentages are
-   derived from them against the cropped viewBox below. */
-// Cropped above Antarctica: it reads as a heavy band across the foot of the
-// frame and pulls the eye off the route.
-const MAP_BOX = { x: 40, y: 28, w: 930, h: 342 };
-const MODES = [
-  { id: "sea", label: "Sea", tint: "#DAE8D9", at: [318, 142] },
-  { id: "air", label: "Air", tint: "#E4E9EE", at: [542, 89] },
-  { id: "road", label: "Road", tint: "#ECE3D7", at: [569, 245] },
-  { id: "rail", label: "Rail", tint: "#E8E3EB", at: [828, 150] },
-];
-const pct = ([x, y]) => ({ left: `${((x - MAP_BOX.x) / MAP_BOX.w) * 100}%`, top: `${((y - MAP_BOX.y) / MAP_BOX.h) * 100}%` });
-
-function ModeIcon({ id }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round" };
-  if (id === "sea")
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...common}>
-        <path d="M3.5 16.5h17l-1.6 3.4a1 1 0 0 1-.9.6H6a1 1 0 0 1-.9-.6z" />
-        <path d="M5.5 16.5V11h13v5.5M12 11V6.5M9.4 8.6h5.2" />
-      </svg>
-    );
-  if (id === "air")
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...common}>
-        <path d="M21 14.5 3 9.2l2-2 6.4 1.6 4.2-4.2a2 2 0 0 1 2.8 2.8l-4.2 4.2 1.6 6.4-2 2z" />
-      </svg>
-    );
-  if (id === "rail")
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...common}>
-        <rect x="6" y="3.5" width="12" height="12.5" rx="2.5" />
-        <path d="M6.5 10.5h11M9.5 19.5l-2 2M14.5 19.5l2 2M9.5 16v3.5h5V16" />
-        <circle cx="9.3" cy="13.2" r=".7" fill="currentColor" stroke="none" />
-        <circle cx="14.7" cy="13.2" r=".7" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" {...common}>
-      <path d="M2.8 7h10v9h-10zM12.8 10.5h4l3 3V16h-7z" />
-      <circle cx="6.4" cy="17.6" r="1.7" />
-      <circle cx="16.4" cy="17.6" r="1.7" />
-    </svg>
-  );
-}
-
-function ModesAside() {
-  const box = `${MAP_BOX.x} ${MAP_BOX.y} ${MAP_BOX.w} ${MAP_BOX.h}`;
-  const [sea, air, road, rail] = MODES.map((m) => m.at);
-  // one smooth run through the four stops, in map coordinates
-  const route = `M${sea[0]},${sea[1]} C${sea[0] + 90},${sea[1] - 55} ${air[0] - 80},${air[1] - 30} ${air[0]},${air[1]} C${air[0] + 70},${air[1] + 35} ${road[0] - 40},${road[1] - 70} ${road[0]},${road[1]} C${road[0] + 70},${road[1] + 50} ${rail[0] - 110},${rail[1] + 60} ${rail[0]},${rail[1]}`;
-
-  return (
-    <div
-      aria-hidden="true"
-      className="relative mx-auto w-full max-w-[640px] lg:mt-1"
-      style={{ aspectRatio: `${MAP_BOX.w} / ${MAP_BOX.h}` }}
-    >
-      <svg viewBox={box} className="absolute inset-0 h-full w-full overflow-visible">
-        {/* the world, as a quiet ground */}
-        <path d={WORLD_PATH} fill="#CFDCCB" fillRule="evenodd" />
-        {/* the route between the modes */}
-        <path d={route} fill="none" stroke="#18201E" strokeOpacity="0.62" strokeWidth="2.6" strokeDasharray="7 9" strokeLinecap="round" />
-        {MODES.map((mode) => (
-          <circle key={mode.id} cx={mode.at[0]} cy={mode.at[1]} r="5.5" fill="#18201E" />
-        ))}
-      </svg>
-
-      {MODES.map((mode) => (
-        <span
-          key={mode.id}
-          style={{ ...pct(mode.at), backgroundColor: mode.tint }}
-          className="absolute flex w-[74px] -translate-x-1/2 -translate-y-[calc(100%+14px)] flex-col items-center gap-1 rounded-2xl px-2 py-2.5 text-ink-primary shadow-[0_1px_2px_rgba(24,32,30,0.05),0_12px_28px_-18px_rgba(24,32,30,0.4)]"
-        >
-          <ModeIcon id={mode.id} />
-          <span className="type-label text-ink-secondary">{mode.label}</span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function FactIcon({ id }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round" };
-  if (id === "platform")
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" {...common}>
-        <rect x="3" y="4.5" width="18" height="12" rx="2" />
-        <path d="M9 20.5h6M12 16.5v4" />
-      </svg>
-    );
-  // team reads as a connected group, so it can't be mistaken for the users mark
-  if (id === "team")
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" {...common}>
-        <circle cx="12" cy="5.4" r="2.4" />
-        <circle cx="5.4" cy="17" r="2.4" />
-        <circle cx="18.6" cy="17" r="2.4" />
-        <path d="M10.3 7.3 6.9 14.6M13.7 7.3l3.4 7.3M7.9 17.6h8.2" />
-      </svg>
-    );
-  // users: one person, with a second at their shoulder
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" {...common}>
-      <circle cx="9.5" cy="8.4" r="3.1" />
-      <path d="M3.6 19.6c0-3.1 2.6-5.2 5.9-5.2s5.9 2.1 5.9 5.2" />
-      <path d="M16.6 6.4a3 3 0 0 1 0 5.6M18.2 14.8c1.4.6 2.2 1.9 2.2 3.4" />
-    </svg>
-  );
-}
-
-const FACT_TINT = { users: "bg-[#E4EDE5]", team: "bg-[#E2EAF4]", platform: "bg-[#EAE6F2]" };
 
 /* ---- Context & Problem ---- */
 
@@ -215,29 +89,94 @@ function CtxIcon({ id, className = "h-6 w-6" }) {
 const FIGURE_BLOCKS = new Set([
   "plate", "toolflow", "painpoints", "image", "gallery", "cards", "metrics",
   "facts", "factCards", "list", "steps", "decisions", "problems", "status",
+  "carousel", "grid", "featured", "glanceCards", "insightCards", "decisionGrid", "flow",
 ]);
 const OPENS_GROUP = new Set(["subsection", "heading"]);
+// Layouts that already hold their own copy, so they open at full distance
+// rather than hugging the line above them.
+const SELF_CONTAINED = new Set(["split", "glanceCards", "insightCards", "decisionGrid", "metrics"]);
 
 function blockGap(prev, cur) {
   if (!prev) return "";
-  if (OPENS_GROUP.has(cur)) return "mt-14 lg:mt-[4.5rem]";
-  if (FIGURE_BLOCKS.has(cur) && (OPENS_GROUP.has(prev) || prev === "lead" || prev === "text")) return "mt-5 lg:mt-6";
+  if (OPENS_GROUP.has(cur)) return "mt-16 lg:mt-20";
+  if (SELF_CONTAINED.has(cur)) return "mt-10 lg:mt-12";
+  if (FIGURE_BLOCKS.has(cur) && (OPENS_GROUP.has(prev) || prev === "lead" || prev === "text")) return "mt-6 lg:mt-7";
   if (cur === "highlight" || cur === "callout" || cur === "note") return "mt-9 lg:mt-10";
   return "mt-7 lg:mt-8";
 }
 
+/* The tool marks.
+
+   Drawn rather than imported: the project only ever had icon files for three of
+   these, and one of those turned out to be a saved HTML page rather than an
+   SVG. These are simplified, recognisable marks in one weight and one colour,
+   so the row reads as a set — they are not the official logos. */
+function ToolMark({ name }) {
+  const svg = { viewBox: "0 0 24 24", className: "h-full w-full", "aria-hidden": "true" };
+  switch (name) {
+    case "Claude Code": // the radial burst
+      return (
+        <svg {...svg} fill="currentColor">
+          {Array.from({ length: 8 }, (_, i) => (
+            <rect key={i} x="11.1" y="2.6" width="1.8" height="18.8" rx="0.9" transform={`rotate(${i * 22.5} 12 12)`} />
+          ))}
+        </svg>
+      );
+    /* The folded ribbon. Outlined it read as a "send" arrow, so it is filled,
+       with the fold cut out by the even-odd rule. */
+    case "VS Code":
+      return (
+        <svg {...svg} fill="currentColor" fillRule="evenodd" clipRule="evenodd">
+          <path d="M17.2 2.4 21.6 4.6v14.8l-4.4 2.2-8.9-7.1-4.3 3.3-1.9-1.1 3.6-4.7-3.6-4.7 1.9-1.1 4.3 3.3 8.9-7.1Zm.5 5.2L11.8 12l5.9 4.4V7.6Z" />
+        </svg>
+      );
+    /* The five shapes. Drawn as rounded rects they all collapsed to circles
+       (a 6-wide rect with rx 3 is a circle), which lost the stacked slabs the
+       mark is actually built from. */
+    case "Figma":
+      return (
+        <svg {...svg} fill="currentColor">
+          <path d="M9 3h3v6H9a3 3 0 1 1 0-6Z" />
+          <path d="M12 3h3a3 3 0 1 1 0 6h-3V3Z" />
+          <path d="M9 9h3v6H9a3 3 0 1 1 0-6Z" />
+          <circle cx="15" cy="12" r="3" />
+          <path d="M9 15h3v3a3 3 0 1 1-3-3Z" />
+        </svg>
+      );
+    case "Gemini": // the four-pointed spark
+      return (
+        <svg {...svg} fill="currentColor">
+          <path d="M12 2c.6 4.9 4.5 8.8 9.4 9.4-4.9.6-8.8 4.5-9.4 9.4-.6-4.9-4.5-8.8-9.4-9.4C7.5 10.8 11.4 6.9 12 2Z" />
+        </svg>
+      );
+    case "ChatGPT": // the interlocking knot, reduced to its hexagon
+      return (
+        <svg {...svg} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
+          <path d="M12 3.2 19.3 7.4v9.2L12 20.8 4.7 16.6V7.4L12 3.2Z" />
+          <path d="M12 3.2v8.3l7.3 4.2M12 11.5 4.7 15.7" />
+        </svg>
+      );
+    case "Vercel": // the triangle
+      return (
+        <svg {...svg} fill="currentColor">
+          <path d="M12 3.5 22 20.5H2L12 3.5Z" />
+        </svg>
+      );
+    case "Google Analytics": // three rising bars
+      return (
+        <svg {...svg} fill="currentColor">
+          <rect x="16.4" y="3" width="4.4" height="18" rx="2.2" />
+          <rect x="9.8" y="8.6" width="4.4" height="12.4" rx="2.2" />
+          <rect x="3.2" y="14.2" width="4.4" height="6.8" rx="2.2" />
+        </svg>
+      );
+    default:
+      return <svg {...svg} fill="currentColor"><circle cx="12" cy="12" r="4" /></svg>;
+  }
+}
+
 function Block({ block, reduce }) {
   switch (block.type) {
-    case "subsection":
-      return (
-        <div className="min-w-0">
-          <h3 className="font-serif text-ink-primary [font-size:clamp(23px,2.1vw,31px)] [line-height:1.15]">{block.title}</h3>
-          <p className="type-body-l mt-3 text-ink-primary/75">
-            <Rich text={block.text} />
-          </p>
-        </div>
-      );
-
     case "highlight":
       return (
         <div className="flex gap-5 rounded-2xl bg-[#E9F0E6] px-6 py-6 lg:gap-6 lg:px-8">
@@ -245,51 +184,9 @@ function Block({ block, reduce }) {
             <CtxIcon id={block.icon} />
           </span>
           <div className="min-w-0 flex-1 border-l border-forest/25 pl-5">
-            <h4 className="font-serif text-ink-primary [font-size:clamp(18px,1.6vw,23px)]">{block.title}</h4>
-            <p className="type-body-s mt-2 text-ink-primary/75">{block.text}</p>
+            <h4 className="font-serif font-semibold text-ink-primary [font-size:clamp(18px,1.6vw,23px)]">{block.title}</h4>
+            <p className="text-[13px] leading-[20px] mt-2 text-ink-primary/75">{block.text}</p>
           </div>
-        </div>
-      );
-
-    case "toolflow":
-      return (
-        <div>
-          <div className="flex flex-col lg:flex-row lg:items-stretch">
-            {block.items.map((item, i) => (
-              <Fragment key={item.title}>
-                <div className="flex min-w-0 flex-1 flex-col rounded-2xl bg-[#FBF8F2] p-5 ring-1 ring-border">
-                  <CtxIcon id={item.icon} className="h-7 w-7 text-ink-primary" />
-                  <p className="type-body-s mt-4 font-semibold text-ink-primary">{item.title}</p>
-                  <p className="type-body-s mt-1.5 text-ink-secondary">{item.text}</p>
-                </div>
-                {i < block.items.length - 1 && (
-                  <div className="flex shrink-0 items-center justify-center py-2 lg:w-9 lg:py-0">
-                    <svg viewBox="0 0 24 12" className="h-3 w-5 rotate-90 text-ink-primary/35 lg:rotate-0" aria-hidden="true">
-                      <path d="M0 6h19M15 2l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                )}
-              </Fragment>
-            ))}
-          </div>
-          {block.footnote && (
-            <div className="relative mt-5 hidden h-12 lg:block">
-              <svg viewBox="0 0 1000 40" preserveAspectRatio="none" className="h-full w-full text-ink-primary/30" aria-hidden="true">
-                <path d="M88 4 L88 24 L432 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeDasharray="5 6" vectorEffect="non-scaling-stroke" />
-                <path d="M568 24 L912 24 L912 4" fill="none" stroke="currentColor" strokeWidth="1.2" strokeDasharray="5 6" vectorEffect="non-scaling-stroke" />
-              </svg>
-              {["8.8%", "91.2%"].map((left) => (
-                <span key={left} aria-hidden="true" style={{ left }} className="absolute top-0 -translate-x-1/2 -translate-y-1 text-ink-primary/40">
-                  <svg viewBox="0 0 12 10" className="h-2.5 w-3">
-                    <path d="M6 0 11 9H1z" fill="currentColor" />
-                  </svg>
-                </span>
-              ))}
-              <span className="type-label absolute left-1/2 top-[24px] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-ink-subtle">
-                {block.footnote}
-              </span>
-            </div>
-          )}
         </div>
       );
 
@@ -299,8 +196,8 @@ function Block({ block, reduce }) {
           {block.items.map((item) => (
             <li key={item.title} className="rounded-2xl bg-[#FBF8F2] p-6 ring-1 ring-border">
               <CtxIcon id={item.icon} className="h-7 w-7 text-ink-primary" />
-              <p className="mt-5 font-serif text-ink-primary [font-size:clamp(17px,1.4vw,20px)]">{item.title}</p>
-              <p className="type-body-s mt-2 text-ink-secondary">{item.text}</p>
+              <p className="mt-5 font-serif font-semibold text-ink-primary [font-size:clamp(17px,1.4vw,20px)]">{item.title}</p>
+              <p className="text-[13px] leading-[20px] mt-2 text-ink-secondary">{item.text}</p>
             </li>
           ))}
         </ul>
@@ -337,83 +234,23 @@ function Block({ block, reduce }) {
       );
 
     case "note":
-      return <p className="type-body-s border-l border-border pl-5 text-ink-secondary">{block.text}</p>;
+      return <p className="text-[13px] leading-[20px] border-l border-border pl-5 text-ink-secondary">{block.text}</p>;
 
-    case "problems":
-      return (
-        <ol className="border-t border-border">
-          {block.items.map((item, i) => (
-            <li key={item.title} className="grid gap-2 border-b border-border py-7 lg:grid-cols-[72px_minmax(0,1fr)] lg:gap-8">
-              <span className="type-label pt-1 tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h4 className="type-h4 text-ink-primary">{item.title}</h4>
-                <p className="type-body-s mt-2 text-ink-secondary">{item.text}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      );
-
-    case "opportunity":
-      return (
-        <div className="rounded-2xl bg-forest px-8 py-8 text-cream shadow-[0_20px_44px_-26px_rgba(24,32,30,0.55)]">
-          <p className="type-label uppercase tracking-[0.2em] text-cream/60">{block.label}</p>
-          <p className="type-body-l mt-3 max-w-[760px] text-cream">{block.text}</p>
-        </div>
-      );
-
-    case "intro":
-      return (
-        // The copy leads here, so it takes the larger share and runs to about
-        // half the page before wrapping; items-start keeps the map from hanging
-        // below a short column and colliding with what follows.
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,46%)] lg:gap-10">
-          <div className="max-w-[640px]">
-            {/* pulled up under the heading — it was sitting a long way below it */}
-            <span aria-hidden="true" className="-mt-4 mb-6 block h-px w-12 bg-ink-primary/20" />
-            {/* One size for both lines — the marked phrases and the ink carry
-                the hierarchy, not a change of scale. */}
-            <p className="font-sans font-normal text-ink-primary/90 [font-size:clamp(17px,1.3vw,19px)] [line-height:1.6]">
-              <Rich text={block.lead} />
-            </p>
-            <p className="mt-5 font-sans font-normal text-ink-primary/70 [font-size:clamp(17px,1.3vw,19px)] [line-height:1.6]">
-              <Rich text={block.text} />
-            </p>
-          </div>
-          {block.aside === "modes" && <ModesAside />}
-        </div>
-      );
-
-    case "factCards":
-      // a surface of its own, so the row reads as a panel rather than
-      // dissolving into the page
-      return (
-        <ul className="-mt-4 grid gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/50 shadow-[0_1px_2px_rgba(24,32,30,0.02),0_14px_30px_-26px_rgba(24,32,30,0.2)] sm:grid-cols-3">
-          {block.items.map((item) => (
-            // a warm wash sitting between the page and white — enough to read as
-            // a panel without turning into a bright card
-            <li key={item.label} className="flex gap-4 bg-[#FBF7F0] p-6">
-              <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${FACT_TINT[item.icon] ?? "bg-sage-pale"} text-ink-primary`}>
-                <FactIcon id={item.icon} />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="type-label block uppercase tracking-[0.2em] text-ink-subtle">{item.label}</span>
-                <span className="type-body-s mt-1.5 block font-semibold text-ink-primary">{item.value}</span>
-                <span className="type-body-s mt-1.5 block text-ink-secondary">{item.text}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      );
-
+    // Both carry the emphasis markers: **bold** for the phrase that matters,
+    // __underline__ for the longer clause.
     case "lead":
-      return <p className="type-body-l text-ink-primary/70">{block.text}</p>;
+      return (
+        <p className="text-[16px] leading-[1.6] text-ink-primary/70">
+          <Rich text={block.text} />
+        </p>
+      );
 
     case "text":
-      return <p className="type-body-l text-ink-primary/75">{block.text}</p>;
-
-    case "heading":
-      return <h3 className="type-h4 pt-2 text-ink-primary">{block.text}</h3>;
+      return (
+        <p className="text-[16px] leading-[1.6] text-ink-primary/75">
+          <Rich text={block.text} />
+        </p>
+      );
 
     case "list":
       return (
@@ -421,22 +258,10 @@ function Block({ block, reduce }) {
           {block.items.map((item) => (
             <li key={item} className="flex gap-3.5">
               <Bullet marker={block.marker} />
-              <span className="type-body-l min-w-0 flex-1 text-ink-primary/75">{item}</span>
+              <span className="min-w-0 flex-1 text-[16px] leading-[1.6] text-ink-primary/75"><Rich text={item} /></span>
             </li>
           ))}
         </ul>
-      );
-
-    case "steps":
-      return (
-        <ol className="grid gap-x-12 gap-y-3.5 lg:grid-cols-2">
-          {block.items.map((item, i) => (
-            <li key={item} className="flex gap-4">
-              <span className="type-label mt-1 w-6 shrink-0 tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
-              <span className="type-body-l min-w-0 flex-1 text-ink-primary/75">{item}</span>
-            </li>
-          ))}
-        </ol>
       );
 
     case "facts":
@@ -445,7 +270,7 @@ function Block({ block, reduce }) {
           {block.items.map(([term, detail]) => (
             <div key={term}>
               <dt className="type-label uppercase tracking-[0.2em] text-ink-subtle">{term}</dt>
-              <dd className="type-body-s mt-2 text-ink-secondary">{detail}</dd>
+              <dd className="text-[13px] leading-[20px] mt-2 text-ink-secondary">{detail}</dd>
             </div>
           ))}
         </dl>
@@ -456,39 +281,25 @@ function Block({ block, reduce }) {
         <ul className="grid gap-4 sm:grid-cols-2">
           {block.items.map((item, i) => (
             <li key={item.title} className="rounded-2xl border border-border bg-surface p-6">
-              <p className="type-label text-ink-subtle">{String(i + 1).padStart(2, "0")}</p>
-              <h3 className="type-h4 mt-3 text-ink-primary">{item.title}</h3>
-              <p className="type-body-s mt-3 text-ink-secondary">{item.text}</p>
+              {!block.plain && <p className="type-label text-ink-subtle">{String(i + 1).padStart(2, "0")}</p>}
+              <h3 className={`${block.plain ? "" : "mt-3 "}font-serif text-[18px] font-semibold leading-[26px] text-ink-primary`}>{item.title}</h3>
+              <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary">{item.text}</p>
             </li>
           ))}
         </ul>
       );
 
-    case "decisions":
-      return (
-        <ol className="flex flex-col gap-16 lg:gap-24">
-          {block.items.map((item, i) => (
-            <li key={item.title} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
-              <div className={i % 2 ? "lg:order-2" : undefined}>
-                <span aria-hidden="true" className="font-sans font-semibold leading-none tracking-tight text-ink-primary/15 [font-size:clamp(30px,2.8vw,42px)]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="type-h4 mt-3 text-ink-primary">{item.title}</h3>
-                <p className="type-body-l mt-4 text-ink-primary/75">{item.text}</p>
-              </div>
-              <Figure src={item.src} alt={item.alt} w={item.w} h={item.h} className={i % 2 ? "lg:order-1" : undefined} />
-            </li>
-          ))}
-        </ol>
-      );
-
     case "metrics":
       return (
-        <ul className="grid gap-px overflow-hidden rounded-2xl bg-cream/15 shadow-[0_20px_44px_-26px_rgba(24,32,30,0.5)] sm:grid-cols-2">
+        <ul
+          className={`grid gap-px overflow-hidden rounded-2xl bg-cream/15 shadow-[0_20px_44px_-26px_rgba(24,32,30,0.5)] ${
+            block.items.length >= 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2"
+          }`}
+        >
           {block.items.map((item) => (
-            <li key={item.label} className="bg-forest p-7 text-cream">
-              <p className="font-sans font-semibold tracking-[-0.03em] [font-size:clamp(32px,2.8vw,42px)] [line-height:1]">{item.value}</p>
-              <p className="type-body-s mt-3 text-cream/70">{item.label}</p>
+            <li key={item.label} className="bg-forest px-6 py-9 text-cream">
+              <p className="font-serif font-semibold tracking-[-0.04em] [font-size:clamp(40px,4.4vw,60px)] [line-height:0.95]">{item.value}</p>
+              <p className="text-[13px] leading-[20px] mt-3.5 text-cream/70">{item.label}</p>
             </li>
           ))}
         </ul>
@@ -496,31 +307,328 @@ function Block({ block, reduce }) {
 
     case "callout":
       return (
-        <p className="type-body-l rounded-2xl border-l-2 border-forest bg-sage-pale/60 px-6 py-5 text-ink-primary">{block.text}</p>
+        <p className="rounded-2xl border-l-2 border-forest bg-sage-pale/60 px-6 py-5 text-[16px] leading-[1.6] text-ink-primary">{block.text}</p>
       );
 
     case "status":
       return (
-        <p className="type-body-s inline-flex w-fit items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-ink-secondary">
+        <p className="text-[13px] leading-[20px] inline-flex w-fit items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-ink-secondary">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-forest" />
           {block.text}
         </p>
       );
 
-    case "image":
-      return <Figure src={block.src} alt={block.alt} caption={block.caption} w={block.w} h={block.h} />;
-
-    case "gallery":
+    /* The way out to the thing itself. On a project whose point is to be used,
+       the link is the content, so it gets the weight a section heading would.
+       White on the clay token measures 4.48:1 — under AA for type this size —
+       so the ground is a step darker (5.67:1) and clay stays decorative. */
+    case "cta":
       return (
-        <div className="grid gap-5 sm:grid-cols-2">
-          {block.images.map((image, i) => (
-            <Figure
-              key={image.src + image.alt}
-              {...image}
-              className={i === 0 && block.images.length > 2 ? "sm:col-span-2" : undefined}
-            />
+        <div className="group relative overflow-hidden rounded-3xl bg-[#F6E4E1] px-6 py-10 text-center ring-1 ring-[#E2C3BC] sm:px-10 sm:py-12">
+          <CtaFlowers />
+          <div className="relative z-[1]">
+          {block.href ? (
+            <a
+              href={block.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-[#A14F3E] px-8 py-4 font-serif text-[18px] font-semibold text-[#FFFCF7] shadow-[0_10px_24px_-10px_rgba(90,38,28,0.6)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#8E4435] motion-reduce:transition-none sm:text-[20px]"
+            >
+              <span aria-hidden="true">→</span>
+              {block.label}
+            </a>
+          ) : (
+            <span className="inline-flex items-center gap-3 rounded-full border border-dashed border-[#A14F3E]/50 px-8 py-4 font-serif text-[18px] font-semibold text-[#A14F3E] sm:text-[20px]">
+              <span aria-hidden="true">→</span>
+              {block.label}
+            </span>
+          )}
+            <p className="mt-4 text-[14px] leading-[20px] text-ink-secondary">{block.href ? block.note : block.pending}</p>
+          </div>
+        </div>
+      );
+
+    /* A plain inventory. Naming the tools is the whole content — any more
+       would be elaboration the brief does not want. */
+    case "tools":
+      return (
+        <div>
+          {block.label && <p className="type-label uppercase tracking-[0.2em] text-ink-subtle">{block.label}</p>}
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {block.items.map((item) => (
+              <li
+                key={item}
+                className="inline-flex items-center gap-2 rounded-full bg-surface py-1.5 pl-2.5 pr-4 text-[14px] font-medium text-ink-primary ring-1 ring-border"
+              >
+                <span className="grid h-[18px] w-[18px] shrink-0 place-items-center text-ink-primary/75">
+                  <ToolMark name={item} />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+
+    case "carousel":
+      return <Carousel images={block.images} caption={block.caption} />;
+
+    // A tight grid of equal tiles — for sets where seeing them together is the
+    // point (sketch variations, research artefacts) rather than one at a time.
+    case "grid":
+      return (
+        <ul className={`grid gap-3 ${block.cols === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+          {block.images.map((image) => (
+            <li key={image.src} className="group overflow-hidden rounded-xl border border-border bg-surface">
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={image.w}
+                height={image.h}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="aspect-[4/3] w-full bg-surface object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none"
+              />
+            </li>
+          ))}
+        </ul>
+      );
+
+    /* A feature: the copy beside the screen that shows it. The image leads on
+       width here — these are the product shots people came to look at — and
+       clicking one opens it full size. Looping artwork (an exported GIF) plays
+       by itself and is not a still. */
+    case "features":
+      return <FeatureGroup blocks={block.items} />;
+
+    /* The chain of parties, revealed step by step on hover. */
+    case "flowDiagram":
+      return <ForwarderFlow caption={block.caption} />;
+
+    /* The LiDAR pipeline, rebuilt as markup rather than an exported slide. */
+    case "lidarFlow":
+      return <LidarFlow caption={block.caption} />;
+
+    /* The four-week research plan, in the page's own palette. */
+    case "timeline":
+      return <ResearchTimeline />;
+
+    /* A set of related images, each opening full size. */
+    case "imageSet":
+      return <ImageSet images={block.images} cols={block.cols} feature={block.feature} caption={block.caption} />;
+
+    /* Problem against solution, point for point — the comparison is the
+       content, so the two columns sit side by side and line up. */
+    case "compare":
+      return (
+        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+          {[block.left, block.right].map((col, side) => (
+            <div
+              key={col.title}
+              className={`rounded-2xl p-6 ring-1 ${
+                side === 0 ? "bg-[#FBF5F1] ring-[#E4D3C6]" : "bg-sage-pale/70 ring-forest/15"
+              }`}
+            >
+              <p className={`text-[11px] font-semibold uppercase tracking-[0.2em] ${side === 0 ? "text-[#9A6246]" : "text-forest"}`}>
+                {col.title}
+              </p>
+              <ul className="mt-5 flex flex-col gap-4">
+                {col.items.map((item) => (
+                  <li key={item} className="flex gap-3">
+                    <span aria-hidden="true" className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${side === 0 ? "bg-[#B5775A]" : "bg-forest"}`} />
+                    <span className="min-w-0 flex-1 text-[15px] leading-[1.6] text-ink-primary/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
+      );
+
+    /* Verbatim user quotes, each in its own box with the question it answers
+       as the heading — the shape they had in the original write-up. */
+    case "quotes":
+      return (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {block.items.map((item) => (
+            <li key={item.ask} className="flex flex-col rounded-2xl bg-surface p-6 ring-1 ring-border">
+              {/* the quote mark sits on the question's own line rather than
+                  taking a line of its own above it */}
+              <p className="font-serif text-[17px] font-semibold leading-[24px] text-ink-primary">
+                <span aria-hidden="true" className="mr-1.5 font-serif text-[22px] leading-none text-forest/40">“</span>
+                {item.ask}
+              </p>
+              <p className="mt-2.5 flex-1 text-[14px] leading-[1.6] text-ink-secondary">{item.said}</p>
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-secondary">{item.who}</p>
+            </li>
+          ))}
+        </ul>
+      );
+
+    /* Closing takeaways — numbered, not ticked. */
+    case "takeaways":
+      return (
+        <ol className="grid gap-x-10 gap-y-5 sm:grid-cols-2">
+          {block.items.map((item, i) => (
+            <li key={item} className="flex gap-4">
+              <span className="font-serif text-[20px] font-semibold leading-[26px] tabular-nums text-forest/45">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="min-w-0 flex-1 text-[15px] leading-[1.6] text-ink-primary/80">{item}</span>
+            </li>
+          ))}
+        </ol>
+      );
+
+    /* One image, given room but not the whole column — unless it is the only
+       visual a study has, in which case `wide` lets it take the full measure. */
+    case "featured":
+      return (
+        <figure className={`mx-auto w-full ${block.wide ? "" : "max-w-[68%] max-lg:max-w-full"}`}>
+          <img
+            src={block.src}
+            alt={block.alt}
+            width={block.w}
+            height={block.h}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className={`w-full rounded-xl border border-border bg-surface object-contain shadow-[0_8px_24px_rgba(24,32,30,0.12)] ${
+              block.wide ? "max-h-[640px]" : "max-h-[440px]"
+            }`}
+          />
+          {block.caption && (
+            <figcaption className="mt-3 text-center text-[13px] italic leading-[20px] text-ink-subtle">{block.caption}</figcaption>
+          )}
+        </figure>
+      );
+
+    /* The close: the numbers on the left, what they taught on the right. */
+    case "outcomeSplit":
+      return (
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]">
+          <ul className="grid grid-cols-2 gap-3 self-start">
+            {block.metrics.map((metric) => (
+              <li key={metric.label} className="rounded-xl bg-surface px-5 py-6">
+                <p className="font-serif text-[30px] font-semibold leading-none tracking-[-0.02em] text-forest">{metric.value}</p>
+                <p className="mt-2.5 text-[13px] leading-[18px] text-ink-secondary">{metric.label}</p>
+              </li>
+            ))}
+          </ul>
+          <ul className="flex flex-col gap-3">
+            {block.learnings.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-forest/55" />
+                <span className="text-[16px] leading-[1.6] text-ink-primary/80">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+
+    // The five cards that open the study: scannable in about thirty seconds.
+    case "glanceCards":
+      return (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {block.items.map((item, i) => (
+            <li
+              key={item.label}
+              className={`flex flex-col rounded-2xl border border-border bg-surface p-6 transition-shadow duration-300 hover:shadow-[0_8px_24px_rgba(24,32,30,0.1)] ${
+                item.wide || (block.items.length % 2 === 1 && i === block.items.length - 1) ? "sm:col-span-2" : ""
+              }`}
+            >
+              <span className="flex items-center gap-2.5">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sage-pale text-forest">
+                  <CtxIcon id={item.icon} className="h-[18px] w-[18px]" />
+                </span>
+                <span className="type-label uppercase tracking-[0.24em] text-ink-subtle">{item.label}</span>
+              </span>
+              <p className="mt-4 font-serif font-semibold text-ink-primary [font-size:clamp(19px,1.7vw,24px)] [line-height:1.3]">{item.text}</p>
+              {item.src && (
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  width={item.w}
+                  height={item.h}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="mt-5 h-40 w-full rounded-xl border border-border bg-canvas object-cover"
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      );
+
+    // Three findings, side by side, so they read as a set rather than a list.
+    case "insightCards":
+      return (
+        <ul className="grid gap-4 sm:grid-cols-3">
+          {block.items.map((item, i) => (
+            <li key={item.title} className="rounded-2xl border border-border bg-surface p-6">
+              <span className="type-label tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
+              <p className="mt-3 font-serif font-semibold text-ink-primary [font-size:clamp(18px,1.5vw,22px)] [line-height:1.25]">{item.title}</p>
+              <p className="text-[13px] leading-[20px] mt-2.5 text-ink-secondary">{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      );
+
+    // Decisions as a two-up grid: mark, one line of reasoning, and the screen
+    // it produced — small, inline, not a full-width dump.
+    case "decisionGrid":
+      return (
+        <ul className="grid gap-5 sm:grid-cols-2">
+          {block.items.map((item) => (
+            <li key={item.title} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+              {item.src && (
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  width={item.w}
+                  height={item.h}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="aspect-[16/9] w-full bg-canvas object-cover"
+                />
+              )}
+              <div className="flex flex-1 flex-col p-6">
+                <span className="flex items-center gap-2.5">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sage-pale text-forest">
+                    <CtxIcon id={item.icon} className="h-4 w-4" />
+                  </span>
+                  <span className="font-serif font-semibold text-ink-primary [font-size:clamp(17px,1.4vw,20px)]">{item.title}</span>
+                </span>
+                <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary">{item.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      );
+
+    // The walkthrough as a row of steps rather than a numbered paragraph.
+    case "flow":
+      return (
+        <ol className="flex flex-col gap-2 lg:flex-row lg:items-stretch lg:gap-0">
+          {block.steps.map((step, i) => (
+            <Fragment key={step}>
+              <li className="flex min-w-0 flex-1 items-center gap-3 rounded-xl bg-[#FBF8F2] px-4 py-3.5 ring-1 ring-border lg:flex-col lg:items-start lg:gap-2 lg:px-5">
+                <span className="type-label shrink-0 tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-[13px] leading-[20px] min-w-0 text-ink-primary">{step}</span>
+              </li>
+              {i < block.steps.length - 1 && (
+                <span aria-hidden="true" className="flex shrink-0 items-center justify-center py-0.5 text-ink-primary/30 lg:w-7 lg:py-0">
+                  <svg viewBox="0 0 24 12" className="h-3 w-5 rotate-90 lg:rotate-0" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M0 6h19M15 2l4 4-4 4" />
+                  </svg>
+                </span>
+              )}
+            </Fragment>
+          ))}
+        </ol>
       );
 
     default:
@@ -528,41 +636,80 @@ function Block({ block, reduce }) {
   }
 }
 
-/* ---- share ---- */
+/* One feature: copy on one side, the screen on the other.
 
-function ShareLinks({ title }) {
-  const [copied, setCopied] = useState(false);
-  const url = typeof window === "undefined" ? "" : window.location.href;
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
-  };
-
-  const chip = "type-label inline-flex items-center rounded-full border border-border bg-surface px-4 py-2 text-ink-secondary transition-colors hover:bg-sage-pale hover:text-ink-primary";
+   The image is the larger column and opens full size on click, because these
+   are the shots a reader actually wants to inspect. Animated exports play on
+   a loop and carry no zoom affordance — there is nothing more to see. */
+function FeatureRow({ block, onOpen }) {
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <span className="type-label uppercase tracking-[0.2em] text-ink-subtle">Share</span>
-      <a className={chip} href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer">
-        LinkedIn
-      </a>
-      <a
-        className={chip}
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        X
-      </a>
-      <button type="button" onClick={copy} className={chip}>
-        {copied ? "Link copied" : "Copy link"}
-      </button>
+    <>
+      {/* Both columns are the same width whichever side the image is on, and
+          the copy aligns to the top of the image rather than its middle. */}
+      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className={`min-w-0 lg:pt-1 ${block.flip ? "lg:order-2" : ""}`}>
+          {block.eyebrow && <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-ink-subtle">{block.eyebrow}</p>}
+          {block.title && (
+            <h3 className="mt-2 font-serif text-[18px] font-semibold leading-[26px] text-ink-primary">{block.title}</h3>
+          )}
+          <p className="mt-3 text-[16px] leading-[1.6] text-ink-secondary">
+            <Rich text={block.text} />
+          </p>
+        </div>
+
+        <div className={`min-w-0 ${block.flip ? "lg:order-1" : ""}`}>
+          {(
+            <button
+              type="button"
+              onClick={onOpen}
+              aria-label={`View full size: ${block.alt}`}
+              className="group relative block w-full overflow-hidden rounded-xl border border-border bg-surface outline-offset-4 focus-visible:outline-2 focus-visible:outline-forest"
+            >
+              <img
+                src={block.src}
+                alt={block.alt}
+                width={block.w}
+                height={block.h}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 flex items-end justify-end bg-ink-primary/0 p-3 opacity-0 transition-all duration-300 group-hover:bg-ink-primary/10 group-hover:opacity-100"
+              >
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface/95 px-2.5 py-1 text-[11px] font-medium text-ink-primary shadow-[0_2px_8px_rgba(24,32,30,0.15)]">
+                  View
+                  <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </span>
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
+
+    </>
+  );
+}
+
+/* All of a section's features share one viewer, so opening any still screen
+   lets you step through the rest of that section — not just the one clicked. */
+function FeatureGroup({ blocks }) {
+  const [open, setOpen] = useState(null);
+  // Every feature opens, animations included — a looping WebP enlarges and
+  // keeps playing, so there is no reason to exclude it from the viewer.
+  const images = blocks.map((b) => ({ src: b.src, alt: b.alt, caption: b.title }));
+
+  return (
+    <div className="flex flex-col gap-14 lg:gap-20">
+      {blocks.map((block, i) => (
+        <FeatureRow key={block.title} block={block} onOpen={() => setOpen(i)} />
+      ))}
+      <Lightbox images={images} index={open} onClose={() => setOpen(null)} onIndex={setOpen} />
     </div>
   );
 }
@@ -578,71 +725,113 @@ function ShareLinks({ title }) {
    picture still reads as a picture. Below lg the copy drops under the image —
    there is not enough height to set it over the photo on a phone. */
 
-function HeroCover({ study, story, fadeUp, reduce }) {
+/* The composite cover: a scene built around the product, with empty space on
+   its left for the copy. It takes live type rather than a scrim and a centred
+   block — the artwork was made for exactly this. Below lg the copy drops under
+   the image, where there is room for it. */
+function HeroComposite({ study, story, fadeUp, reduce }) {
   return (
-    <div className="relative -mx-4 sm:-mx-6 lg:mx-[calc(50%-50vw)] lg:w-screen">
-      <div className="relative">
-        <motion.img
-          {...fadeUp}
-          transition={reduce ? undefined : { ...fadeUp.transition, delay: 0.05 }}
-          src={story.cover.src}
-          alt={story.cover.alt}
-          width={story.cover.w}
-          height={story.cover.h}
-          className="block h-[clamp(260px,42vw,560px)] w-full object-cover"
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden lg:block"
-          /* Measured, not guessed: two of the four covers are bright (a white
-             desk, pale florals), and at a lighter scrim the small metadata
-             text fell to 3.4:1 over them — under the 4.5:1 AA needs. These
-             stops hold every cover above it across the band the copy sits in,
-             while still letting the right-hand side of the photo through. */
-          style={{
-            background:
-              "linear-gradient(100deg, rgba(8,11,10,0.92) 0%, rgba(8,11,10,0.86) 38%, rgba(8,11,10,0.42) 66%, rgba(8,11,10,0.10) 100%)",
-          }}
-        />
-      </div>
+    <div className="relative -mx-5 sm:-mx-8 lg:mx-[calc(50%-50vw)] lg:w-screen">
+      <motion.img
+        {...fadeUp}
+        transition={reduce ? undefined : { ...fadeUp.transition, delay: 0.05 }}
+        src={story.cover.src}
+        alt={story.cover.alt}
+        width={story.cover.w}
+        height={story.cover.h}
+        className="mt-6 block w-full lg:mt-0"
+      />
 
-      {/* Over the photo from lg up; underneath it below that. */}
+      {/* The cover now carries its own typography, set into the artwork by the
+          designer, so there is nothing to overlay and no wash to make an
+          overlay readable. Below lg the baked type would scale to a few
+          pixels — measured at ~5px for the labels at 1024px — so the copy
+          takes over there and is merely sr-only above it, which keeps the h1
+          and the metadata in the accessibility tree at every width. */}
       <motion.div
         {...fadeUp}
-        className="px-4 pb-2 pt-8 sm:px-6 lg:absolute lg:inset-y-0 lg:left-0 lg:z-10 lg:flex lg:w-[62%] lg:flex-col lg:justify-center lg:px-[max(1.5rem,calc(50vw-600px))] lg:pb-0 lg:pt-0"
+        className="px-5 pb-2 pt-8 sm:px-8 lg:sr-only"
       >
-        <h1 className="font-sans font-semibold tracking-[-0.03em] text-ink-primary [font-size:clamp(40px,6vw,76px)] [line-height:1.03] lg:text-white">
-          {study.title}
-        </h1>
-        <p className="type-body-l mt-5 max-w-[560px] text-ink-secondary lg:text-white/80">{story.tagline ?? study.description}</p>
+        <div className="lg:max-w-[560px]">
+          <h1 className="font-serif text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-ink-primary lg:text-[clamp(48px,4.8vw,72px)]">
+            {study.title}
+          </h1>
+          <p className="mt-5 max-w-[520px] text-[16px] leading-[1.6] text-ink-secondary lg:text-[17px]">
+            {story.tagline ?? study.description}
+          </p>
 
-        <dl className="mt-8 flex flex-nowrap items-start lg:max-w-[560px]">
-          {story.meta.map(([term, value], index) => (
-            <div
-              key={term}
-              className={`min-w-0 flex-1 ${index > 0 ? "border-l border-border pl-5 lg:border-white/25" : ""} ${
-                index < story.meta.length - 1 ? "pr-5" : ""
-              }`}
-            >
-              <dt className="type-label uppercase tracking-[0.2em] text-ink-subtle lg:text-white/60">{term}</dt>
-              <dd className="type-body-s mt-2 font-medium text-ink-primary lg:text-white">{value}</dd>
-            </div>
-          ))}
-        </dl>
+          {/* Phone-width only, now that the cover carries its own metadata — so it
+              simply has to fit. The row was once flex-nowrap with nowrap values,
+              which kept ROLE off the ship back when the copy sat on the artwork;
+              with Bloom Craft's longer values that spilled 47px past a 350px
+              column as text, invisible to any element-rectangle check. */}
+          <dl className="mt-7 flex flex-wrap items-start gap-x-7 gap-y-4">
+            {story.meta.map(([term, value]) => (
+              /* No dividing rules: the row wraps on a phone, and a left border
+                 then dangles at the start of the second line with nothing before
+                 it. The gap separates the columns on its own — which is also how
+                 the other hero variant has always done it. */
+              <div key={term} className="min-w-0">
+                <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-forest">{term}</dt>
+                <dd className="mt-1.5 text-[14px] font-medium leading-[19px] text-ink-primary">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </motion.div>
     </div>
   );
 }
 
-/* The seam between the summary and the full process: a ruled line with the
-   next part named on it, so the page stays one scroll while still announcing
-   that the detail starts here. */
-function PartDivider({ label }) {
+function HeroCover({ study, story, fadeUp, reduce }) {
+  if (story.heroLayout === "composite") {
+    return <HeroComposite study={study} story={story} fadeUp={fadeUp} reduce={reduce} />;
+  }
   return (
-    <div className="flex items-center gap-5 py-4">
-      <span aria-hidden="true" className="h-px flex-1 bg-border" />
-      <span className="type-label uppercase tracking-[0.24em] text-ink-subtle">{label}</span>
-      <span aria-hidden="true" className="h-px flex-1 bg-border" />
+    <div className="relative -mx-5 overflow-hidden sm:-mx-8 lg:mx-[calc(50%-50vw)] lg:w-screen">
+      <motion.img
+        {...fadeUp}
+        transition={reduce ? undefined : { ...fadeUp.transition, delay: 0.05 }}
+        src={story.cover.src}
+        alt={story.cover.alt}
+        width={story.cover.w}
+        height={story.cover.h}
+        className="block h-[60vh] max-h-[620px] min-h-[380px] w-full object-cover"
+      />
+
+      {/* A flat 40% wash, plus a soft darkening behind the centred block only.
+          Two of the four covers are bright, and at 40% alone white type sits
+          near 2:1 over them — far under AA. The extra weight is local to the
+          text, so the picture still reads as a picture at the edges. */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[rgba(8,11,10,0.40)]" />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(ellipse 78% 72% at 50% 50%, rgba(8,11,10,0.66) 0%, rgba(8,11,10,0.46) 58%, rgba(8,11,10,0) 100%)" }}
+      />
+
+      <motion.div
+        {...fadeUp}
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"
+      >
+        <h1 className="font-serif text-[32px] font-semibold leading-[1.1] tracking-[-0.02em] text-white [text-shadow:0_2px_4px_rgba(8,11,10,0.6)] sm:text-[40px] lg:text-[48px]">
+          {study.title}
+        </h1>
+        {/* The spec's #626762 is a grey for pale grounds; over a darkened photo
+            it is barely visible, so the one-liner is white at 80% instead. */}
+        <p className="mt-4 max-w-[620px] text-[16px] leading-[1.6] text-white/80 [text-shadow:0_2px_3px_rgba(8,11,10,0.55)] sm:text-[18px]">
+          {story.tagline ?? study.description}
+        </p>
+
+        <dl className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {story.meta.map(([term, value]) => (
+            <div key={term} className="flex items-center gap-2">
+              <dt className="text-[11px] uppercase tracking-[0.18em] text-white/55">{term}</dt>
+              <dd className="text-[13px] font-medium text-white">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </motion.div>
     </div>
   );
 }
@@ -652,25 +841,9 @@ function PartDivider({ label }) {
 export default function CaseStudyStory({ study, story, onBack }) {
   const reduce = useReducedMotion();
 
-  /* The two readings are one continuous page. Section ids repeat between them
-     ("overview" and "outcome" exist in both), so each gets a uid prefixed with
-     its part — otherwise the anchors collide and a jump lands on whichever
-     came first. `offset` keeps the alternating band counting across the seam. */
-  const groups = useMemo(
-    () =>
-      story.views.map((view, i) => ({
-        id: view.id,
-        label: view.groupLabel ?? (i === 0 ? "At a Glance" : "Process"),
-        // how many sections precede this part, so the alternating band keeps
-        // counting across the seam instead of restarting
-        offset: story.views.slice(0, i).reduce((n, v) => n + v.sections.length, 0),
-        sections: view.sections.map((section) => ({ ...section, uid: `${view.id}-${section.id}` })),
-      })),
-    [story.views],
-  );
-
-  const firstUid = groups[0].sections[0].uid;
-  const [activeUid, setActiveUid] = useState(firstUid);
+  // One flat run of sections, in the order the project actually happened.
+  const sections = story.sections;
+  const [activeId, setActiveId] = useState(sections[0].id);
   const sectionsRef = useRef(null);
 
   const fadeUp = reduce
@@ -679,22 +852,65 @@ export default function CaseStudyStory({ study, story, onBack }) {
 
   // Follow the section the reader is in.
   useEffect(() => {
-    const uids = groups.flatMap((g) => g.sections.map((s) => s.uid));
-    const nodes = uids.map((uid) => document.getElementById(`section-${uid}`)).filter(Boolean);
+    const nodes = sections.map((s) => document.getElementById(`section-${s.id}`)).filter(Boolean);
     if (!nodes.length) return undefined;
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) setActiveUid(visible[0].target.id.replace("section-", ""));
+        if (visible[0]) setActiveId(visible[0].target.id.replace("section-", ""));
       },
       { rootMargin: "-20% 0px -65% 0px", threshold: 0 },
     );
     nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [groups]);
+  }, [sections]);
 
-  const jumpTo = (uid) => {
-    document.getElementById(`section-${uid}`)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  /* The rail sits in the left margin, which the full-bleed hero spans — so at
+     the top of the page its labels would land on the cover photo. It appears
+     once the story has reached the top of the viewport.
+
+     This is driven by an observer rather than a scroll listener: the listener
+     version latched false on its first run, when the ref was not yet attached,
+     and never recovered. The observer re-fires whenever the boundary is
+     crossed, so there is no first-run ordering to get wrong. */
+  const railSentinel = useRef(null);
+  const [railReady, setRailReady] = useState(false);
+  useEffect(() => {
+    const node = railSentinel.current;
+    if (!node) return undefined;
+
+    /* Fourth attempt at this, so here is what actually goes wrong.
+
+       An IntersectionObserver only fires when the target *crosses* the root
+       boundary. Watching a zero-height marker means that once it is thousands
+       of pixels above the viewport no further callback ever arrives, so a
+       reading taken before first paint — when the marker had not yet moved —
+       latches and never corrects. A scroll listener had the mirror-image bug.
+
+       Observing a tall element instead gives a boundary that is continuously
+       being crossed while the reader moves through the story, so the state
+       stays honest: the wrapper's top edge is the thing we care about, and
+       it is tracked by giving the sentinel the wrapper's full height. */
+    const measure = () => {
+      const top = node.getBoundingClientRect().top;
+      setRailReady(top <= 96);
+    };
+    measure();
+
+    const observer = new IntersectionObserver(measure, {
+      // a tall stack of thresholds keeps the callback firing as it travels
+      threshold: Array.from({ length: 21 }, (_, i) => i / 20),
+    });
+    observer.observe(node);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  const jumpTo = (id) => {
+    document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   };
 
   return (
@@ -704,7 +920,7 @@ export default function CaseStudyStory({ study, story, onBack }) {
           <a
             href="#work"
             onClick={onBack}
-            className="type-body-s inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-medium text-ink-primary transition-colors hover:bg-sage-pale"
+            className="text-[13px] leading-[20px] inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-medium text-ink-primary transition-colors hover:bg-sage-pale"
           >
             <span aria-hidden="true">←</span> Back to case studies
           </a>
@@ -712,7 +928,9 @@ export default function CaseStudyStory({ study, story, onBack }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10">
+      {/* A 1000px column: long measures are the main reason a case study reads
+          as a document rather than a piece of design. */}
+      <main className="mx-auto max-w-[1000px] px-5 sm:px-8 lg:px-10">
         {/* Universal header: the cover, with the title and metadata over it. */}
         <HeroCover study={study} story={story} fadeUp={fadeUp} reduce={reduce} />
 
@@ -720,58 +938,69 @@ export default function CaseStudyStory({ study, story, onBack }) {
             keeps this whole column; it sticks inside this wrapper and stops
             where the story ends. */}
         <div ref={sectionsRef} className="relative scroll-mt-24 pt-10">
-          <SectionNav groups={groups} activeUid={activeUid} onJump={jumpTo} reduce={reduce} />
+          {/* Spans the whole story, so its top edge keeps crossing thresholds
+              as the reader scrolls and the rail's state stays live. */}
+          <span ref={railSentinel} aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-px" />
+          <SectionNav sections={sections} activeId={activeId} onJump={jumpTo} reduce={reduce} ready={railReady} numbered={story.numbered !== false} />
 
           <div className="min-w-0">
-            {groups.map((group, g) => (
-              <Fragment key={group.id}>
-                {g > 0 && <PartDivider label={group.label} />}
 
-                {group.sections.map((section, i) => (
-                  <motion.section
-                    key={section.uid}
-                    id={`section-${section.uid}`}
-                    {...(reduce ? {} : { initial: { opacity: 0, y: 12 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-60px" }, transition: { duration: 0.4, ease: EASE } })}
-                    className="relative scroll-mt-28 py-16 lg:py-24"
-                  >
-                    {/* every other section sits on a lighter full-bleed band, so
-                        the story has a rhythm instead of running as one flat
-                        sheet. The count carries across both parts, so the
-                        banding never doubles up at the seam. */}
-                    {(group.offset + i) % 2 === 1 && (
-                      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 bg-[#F7F3E9]" />
-                    )}
-                    <header className="relative z-[1]">
-                      <p className="type-label uppercase tracking-[0.24em] text-ink-subtle">{String(i + 1).padStart(2, "0")}</p>
-                      <h2 className="mt-2.5 font-serif text-ink-primary [font-size:clamp(32px,3.4vw,50px)] [line-height:1.05]">{section.title}</h2>
-                    </header>
-                    <div className="relative z-[1] mt-9 flex flex-col lg:mt-10">
-                      {section.blocks.map((block, index) => (
-                        <div key={`${section.uid}-${index}`} className={blockGap(section.blocks[index - 1]?.type, block.type)}>
-                          <Block block={block} reduce={reduce} />
-                        </div>
-                      ))}
+            {sections.map((section, i) => (
+              <Fragment key={section.id}>
+              <motion.section
+                id={`section-${section.id}`}
+                {...(reduce ? {} : { initial: { opacity: 0, y: 12 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-60px" }, transition: { duration: 0.4, ease: EASE } })}
+                className="relative scroll-mt-28 py-[44px] lg:py-[50px]"
+              >
+                {/* Alternating grounds give the page a rhythm instead of one
+                    flat sheet; the closing section takes the sage accent. */}
+                {section.accent ? (
+                  <span aria-hidden="true" className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 bg-sage" />
+                ) : (
+                  i % 2 === 1 && (
+                    <span aria-hidden="true" className="absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2 bg-[#F6F1E6]" />
+                  )
+                )}
+                <header className="relative z-[1]">
+                  {story.numbered !== false && (
+                    <p className="text-[14px] font-semibold tabular-nums tracking-[0.14em] text-ink-secondary">{String(i + 1).padStart(2, "0")}</p>
+                  )}
+                  {/* Hierarchy, not volume: 20px semibold carries a section
+                      head at this measure without shouting over the body. */}
+                  <h2 className="mt-2.5 font-serif text-[20px] font-semibold leading-[28px] text-ink-primary">{section.title}</h2>
+                  {section.standfirst && (
+                    <p className="mt-3 max-w-[700px] text-[16px] leading-[1.6] text-ink-secondary">{section.standfirst}</p>
+                  )}
+                </header>
+                <div className="relative z-[1] mt-7 flex flex-col">
+                  {section.blocks.map((block, index) => (
+                    <div key={`${section.id}-${index}`} className={blockGap(section.blocks[index - 1]?.type, block.type)}>
+                      <Block block={block} reduce={reduce} />
                     </div>
-                  </motion.section>
-                ))}
+                  ))}
+                </div>
+              </motion.section>
               </Fragment>
             ))}
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer — the other projects, and nothing else. The header already
+            carries the way back, so repeating it here only adds noise. */}
         <BrowseProjects currentSlug={study.slug} />
 
-        <div className="mb-24 mt-12 flex flex-wrap items-center justify-between gap-6 border-t border-border pt-10">
+        {/* The header goes back to the case studies; this goes all the way out.
+            No onBack handler: that one steps through history to restore the
+            home scroll position, which is the opposite of "take me to the top". */}
+        <div className="mt-14 border-t border-border pt-8">
           <a
-            href="#work"
-            onClick={onBack}
-            className="type-body-s inline-flex items-center gap-2 font-medium text-ink-primary underline decoration-ink-primary/30 decoration-1 underline-offset-[6px] transition-colors hover:decoration-ink-primary"
+            href="#top"
+            className="text-[13px] leading-[20px] inline-flex items-center gap-2 font-medium text-ink-secondary transition-colors hover:text-ink-primary"
           >
-            <span aria-hidden="true">←</span> Back to Case Studies
+            <span aria-hidden="true">←</span> Back to Home
           </a>
-          <ShareLinks title={`${study.title} — ${study.description}`} />
         </div>
+        <div className="h-24" />
       </main>
     </div>
   );
