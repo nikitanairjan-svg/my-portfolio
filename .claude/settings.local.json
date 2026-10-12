@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sips *)",
+      "Bash(npm run *)",
+      "Bash(python3 *)",
+      "Bash(cp /Users/nikitanair/.claude/image-cache/6dd2e479-e0b6-4d0d-bfc5-33381e928628/8.png /Users/nikitanair/Desktop/portfolio-project/portfolio-assets/left/plant-v2.png)",
+      "Bash(cp /Users/nikitanair/.claude/image-cache/6dd2e479-e0b6-4d0d-bfc5-33381e928628/9.png /Users/nikitanair/Desktop/portfolio-project/public/pegboard-plain.png)",
+      "Bash(pip3 install *)"
+    ]
+  }
+}
