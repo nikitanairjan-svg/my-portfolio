@@ -48,7 +48,7 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-4 px-4 sm:h-[72px] sm:px-6 lg:px-10">
-        <a href="#top" aria-label="Nikita Nair, home" className="-ml-1 shrink-0 text-ink transition-colors hover:text-moss">
+        <a href="#top" aria-label="Nikita Nair, home" data-signature-target className="-ml-1 shrink-0 text-ink transition-colors hover:text-moss">
           <Signature className="h-auto w-[92px] sm:w-[150px]" title="Nikita Nair" />
         </a>
 

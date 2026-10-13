@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
+import SignatureIntro from "./components/SignatureIntro";
 import Pegboard from "./components/Pegboard";
 import TravelModal from "./components/TravelModal";
 import CaseStudies from "./components/CaseStudies";
@@ -81,6 +82,7 @@ export default function App() {
   return (
     <div id="top" className="relative min-h-screen bg-wall">
       <Navbar />
+      <SignatureIntro />
       <main className="wall-surface w-full">
         <Pegboard onOpenTravel={setOpenIndex} />
       </main>

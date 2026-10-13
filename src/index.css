@@ -277,3 +277,9 @@ body {
   font-size: 12px;
   line-height: 16px;
 }
+
+/* While the opening signature plays, the header's own copy waits hidden; the
+   flying one lands exactly on it and hands over. */
+html[data-intro="playing"] [data-signature-target] {
+  opacity: 0;
+}
