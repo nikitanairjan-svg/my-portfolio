@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import Navbar from "./components/Navbar";
 import Pegboard from "./components/Pegboard";
 import TravelModal from "./components/TravelModal";
 import CaseStudies from "./components/CaseStudies";
@@ -26,8 +27,14 @@ function useHash() {
 export default function App() {
   const [openIndex, setOpenIndex] = useState(null);
   const hash = useHash();
-  const studyIndex = caseStudies.findIndex((s) => s.slug === hash.match(STUDY_ROUTE)?.[1]);
-  const study = caseStudies[studyIndex];
+  const routed = caseStudies.find((s) => s.slug === hash.match(STUDY_ROUTE)?.[1]);
+  // A study still in progress is not viewable, even from a typed or saved URL.
+  const blocked = routed?.inProgress;
+  const study = blocked ? undefined : routed;
+
+  useEffect(() => {
+    if (blocked) window.location.replace("#work");
+  }, [blocked]);
 
   // Remember where the visitor was on the home page, so "Back" returns them there.
   const homeScroll = useRef(0);
@@ -73,6 +80,7 @@ export default function App() {
 
   return (
     <div id="top" className="relative min-h-screen bg-wall">
+      <Navbar />
       <main className="wall-surface w-full">
         <Pegboard onOpenTravel={setOpenIndex} />
       </main>

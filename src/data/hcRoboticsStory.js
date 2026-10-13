@@ -44,6 +44,8 @@ const WIRE = { w: 1374, h: 776 };
 
 export const hcRoboticsStory = {
   // same treatment as ShipThis: the finished cover, shown as-is
+  // the two parts of the page, each opened by a full-width band (see PartBand)
+  parts: { glance: "At a glance", process: "The process" },
   heroLayout: "composite",
   cover: {
     src: hcHeroCover,
@@ -51,7 +53,8 @@ export const hcRoboticsStory = {
     w: 1983,
     h: 793,
   },
-  tagline: "A B2B web application for mapping and analysing electrical poles from LiDAR scans.",
+  tagline:
+    "A LiDAR-powered platform that helps design engineers map and assess streetlight and electrical pole infrastructure. Engineers identify individual poles and capture key attributes such as height, span and anchor to evaluate pole health.",
   meta: [
     ["Domain", "Robotics & Telecom"],
     ["Type", "SaaS"],
@@ -167,22 +170,9 @@ export const hcRoboticsStory = {
     },
 
     {
-      id: "process",
-      navLabel: "The process",
-      title: "The Process",
-      part: "process",
-      standfirst: "Wireframes, user testing, and refinement on what the testing returned.",
-      blocks: [
-        {
-          type: "text",
-          text: "After identifying the core challenges users faced, I designed a solution to simplify the app's usability. The process ran from high-fidelity wireframes through user testing, refining the design on the feedback each round returned.",
-        },
-      ],
-    },
-
-    {
       id: "research",
       navLabel: "Research",
+      part: "process",
       title: "User Research",
       standfirst: "Interviews with design engineers and admin staff, to find where the work broke down.",
       blocks: [

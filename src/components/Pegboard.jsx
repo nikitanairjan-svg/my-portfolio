@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
 import PegItem from "./PegItem";
-import Navbar from "./Navbar";
 import { ItemArt } from "./PegArt";
 import { CURSORS } from "./cursors";
 import {
@@ -290,10 +289,6 @@ export default function Pegboard({ onOpenTravel }) {
       onPointerLeave={handlePointerLeave}
       onClick={handleClick}
     >
-      {/* Header sits in the top cream margin of the pegboard image */}
-      <div data-native-cursor className="absolute inset-x-0 top-0 z-30 [cursor:var(--cursor-arrow)]">
-        <Navbar />
-      </div>
 
       {/* Fade the photo's bottom margin (below the frame) into the wall below */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[5%] bg-gradient-to-b from-transparent to-wall" />

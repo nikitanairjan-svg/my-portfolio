@@ -184,7 +184,7 @@ function Block({ block, reduce }) {
             <CtxIcon id={block.icon} />
           </span>
           <div className="min-w-0 flex-1 border-l border-forest/25 pl-5">
-            <h4 className="font-serif font-semibold text-ink-primary [font-size:clamp(18px,1.6vw,23px)]">{block.title}</h4>
+            <h4 className="font-serif font-semibold text-ink-primary [font-size:clamp(16px,1.3vw,19px)]">{block.title}</h4>
             <p className="text-[13px] leading-[20px] mt-2 text-ink-primary/75">{block.text}</p>
           </div>
         </div>
@@ -196,7 +196,7 @@ function Block({ block, reduce }) {
           {block.items.map((item) => (
             <li key={item.title} className="rounded-2xl bg-[#FBF8F2] p-6 ring-1 ring-border">
               <CtxIcon id={item.icon} className="h-7 w-7 text-ink-primary" />
-              <p className="mt-5 font-serif font-semibold text-ink-primary [font-size:clamp(17px,1.4vw,20px)]">{item.title}</p>
+              <p className="mt-5 font-serif font-semibold text-ink-primary [font-size:clamp(15px,1.2vw,17px)]">{item.title}</p>
               <p className="text-[13px] leading-[20px] mt-2 text-ink-secondary">{item.text}</p>
             </li>
           ))}
@@ -282,7 +282,7 @@ function Block({ block, reduce }) {
           {block.items.map((item, i) => (
             <li key={item.title} className="rounded-2xl border border-border bg-surface p-6">
               {!block.plain && <p className="type-label text-ink-subtle">{String(i + 1).padStart(2, "0")}</p>}
-              <h3 className={`${block.plain ? "" : "mt-3 "}font-serif text-[18px] font-semibold leading-[26px] text-ink-primary`}>{item.title}</h3>
+              <h3 className={`${block.plain ? "" : "mt-3 "}font-serif text-[16px] font-semibold leading-[24px] text-ink-primary`}>{item.title}</h3>
               <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary">{item.text}</p>
             </li>
           ))}
@@ -544,7 +544,7 @@ function Block({ block, reduce }) {
                 </span>
                 <span className="type-label uppercase tracking-[0.24em] text-ink-subtle">{item.label}</span>
               </span>
-              <p className="mt-4 font-serif font-semibold text-ink-primary [font-size:clamp(19px,1.7vw,24px)] [line-height:1.3]">{item.text}</p>
+              <p className="mt-4 font-serif font-semibold text-ink-primary [font-size:clamp(17px,1.4vw,20px)] [line-height:1.3]">{item.text}</p>
               {item.src && (
                 <img
                   src={item.src}
@@ -569,7 +569,7 @@ function Block({ block, reduce }) {
           {block.items.map((item, i) => (
             <li key={item.title} className="rounded-2xl border border-border bg-surface p-6">
               <span className="type-label tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
-              <p className="mt-3 font-serif font-semibold text-ink-primary [font-size:clamp(18px,1.5vw,22px)] [line-height:1.25]">{item.title}</p>
+              <p className="mt-3 font-serif font-semibold text-ink-primary [font-size:clamp(16px,1.3vw,19px)] [line-height:1.25]">{item.title}</p>
               <p className="text-[13px] leading-[20px] mt-2.5 text-ink-secondary">{item.text}</p>
             </li>
           ))}
@@ -600,7 +600,7 @@ function Block({ block, reduce }) {
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sage-pale text-forest">
                     <CtxIcon id={item.icon} className="h-4 w-4" />
                   </span>
-                  <span className="font-serif font-semibold text-ink-primary [font-size:clamp(17px,1.4vw,20px)]">{item.title}</span>
+                  <span className="font-serif font-semibold text-ink-primary [font-size:clamp(15px,1.2vw,17px)]">{item.title}</span>
                 </span>
                 <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary">{item.text}</p>
               </div>
@@ -636,22 +636,27 @@ function Block({ block, reduce }) {
   }
 }
 
-/* One feature: copy on one side, the screen on the other.
+/* One feature: copy on one side, the screen on the other, alternating.
 
-   The image is the larger column and opens full size on click, because these
-   are the shots a reader actually wants to inspect. Animated exports play on
-   a loop and carry no zoom affordance — there is nothing more to see. */
+   These are the shots a reader came to look at. At an even split they got
+   half the column and were too small to read without opening them, so the
+   screen now takes about two thirds of the row and the copy the rest.
+   Clicking still opens it full size. */
 function FeatureRow({ block, onOpen }) {
 
   return (
     <>
-      {/* Both columns are the same width whichever side the image is on, and
-          the copy aligns to the top of the image rather than its middle. */}
-      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+      {/* The copy aligns to the top of the image rather than its middle. The
+          column template follows the image to whichever side it is on. */}
+      <div
+        className={`grid items-start gap-8 lg:gap-10 ${
+          block.flip ? "lg:grid-cols-[minmax(0,1.85fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.85fr)]"
+        }`}
+      >
         <div className={`min-w-0 lg:pt-1 ${block.flip ? "lg:order-2" : ""}`}>
           {block.eyebrow && <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-ink-subtle">{block.eyebrow}</p>}
           {block.title && (
-            <h3 className="mt-2 font-serif text-[18px] font-semibold leading-[26px] text-ink-primary">{block.title}</h3>
+            <h3 className="mt-2 font-serif text-[16px] font-semibold leading-[24px] text-ink-primary">{block.title}</h3>
           )}
           <p className="mt-3 text-[16px] leading-[1.6] text-ink-secondary">
             <Rich text={block.text} />
@@ -731,7 +736,7 @@ function FeatureGroup({ blocks }) {
    the image, where there is room for it. */
 function HeroComposite({ study, story, fadeUp, reduce }) {
   return (
-    <div className="relative -mx-5 sm:-mx-8 lg:mx-[calc(50%-50vw)] lg:w-screen">
+    <div className="@container relative -mx-5 sm:-mx-8 lg:mx-[calc(50%-50vw)] lg:w-screen">
       <motion.img
         {...fadeUp}
         transition={reduce ? undefined : { ...fadeUp.transition, delay: 0.05 }}
@@ -742,38 +747,42 @@ function HeroComposite({ study, story, fadeUp, reduce }) {
         className="mt-6 block w-full lg:mt-0"
       />
 
-      {/* The cover now carries its own typography, set into the artwork by the
-          designer, so there is nothing to overlay and no wash to make an
-          overlay readable. Below lg the baked type would scale to a few
-          pixels — measured at ~5px for the labels at 1024px — so the copy
-          takes over there and is merely sr-only above it, which keeps the h1
-          and the metadata in the accessibility tree at every width. */}
+      {/* The covers used to carry their type baked into the artwork, which
+          blurred whenever the image was drawn larger than its 1983px (any
+          retina screen). The type is now erased from the art and set here as
+          live text, so it stays sharp at every size. From xl up it sits in the
+          artwork's empty left side, sized in cqw so it scales with the image
+          exactly as the baked type did, with px floors so it never gets too
+          small to read; below xl it drops under the image. */}
       <motion.div
         {...fadeUp}
-        className="px-5 pb-2 pt-8 sm:px-8 lg:sr-only"
+        className="px-5 pb-2 pt-8 sm:px-8 xl:absolute xl:inset-y-0 xl:left-[7cqw] xl:flex xl:flex-col xl:justify-center xl:p-0"
       >
-        <div className="lg:max-w-[560px]">
-          <h1 className="font-serif text-[44px] font-semibold leading-[1.02] tracking-[-0.02em] text-ink-primary lg:text-[clamp(48px,4.8vw,72px)]">
+        <div className="xl:w-[max(31cqw,340px)]">
+          <h1 className="font-display text-[36px] font-medium leading-[1.08] tracking-[-0.025em] xl:whitespace-nowrap text-[#141a17] xl:text-[length:max(40px,4.6cqw)]">
             {study.title}
           </h1>
-          <p className="mt-5 max-w-[520px] text-[16px] leading-[1.6] text-ink-secondary lg:text-[17px]">
+          <p className="mt-5 max-w-[520px] text-[16px] leading-[1.6] text-[#4a504c] xl:mt-[max(14px,1.5cqw)] xl:max-w-none xl:text-[length:max(15px,1.1cqw)] xl:leading-[1.45]">
             {story.tagline ?? study.description}
           </p>
 
-          {/* Phone-width only, now that the cover carries its own metadata — so it
-              simply has to fit. The row was once flex-nowrap with nowrap values,
-              which kept ROLE off the ship back when the copy sat on the artwork;
-              with Bloom Craft's longer values that spilled 47px past a 350px
-              column as text, invisible to any element-rectangle check. */}
-          <dl className="mt-7 flex flex-wrap items-start gap-x-7 gap-y-4">
-            {story.meta.map(([term, value]) => (
-              /* No dividing rules: the row wraps on a phone, and a left border
-                 then dangles at the start of the second line with nothing before
-                 it. The gap separates the columns on its own — which is also how
-                 the other hero variant has always done it. */
-              <div key={term} className="min-w-0">
-                <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-forest">{term}</dt>
-                <dd className="mt-1.5 text-[14px] font-medium leading-[19px] text-ink-primary">{value}</dd>
+          <dl className="mt-7 flex flex-wrap items-start gap-x-7 gap-y-4 xl:mt-[max(20px,2.8cqw)] xl:flex-nowrap xl:gap-0">
+            {story.meta.map(([term, value], i) => (
+              /* Rules between the columns only from xl, where the row never
+                 wraps; on a phone it can, and a rule would dangle at the start
+                 of the second line. */
+              <div
+                key={term}
+                className={`min-w-0 ${i > 0 ? "xl:border-l xl:border-[#141a17]/20 xl:pl-[max(14px,1.6cqw)]" : ""} ${
+                  i < story.meta.length - 1 ? "xl:pr-[max(14px,1.6cqw)]" : ""
+                }`}
+              >
+                <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-forest xl:text-[length:max(10px,0.7cqw)] xl:font-medium xl:text-[#5d635f]">
+                  {term}
+                </dt>
+                <dd className="mt-1.5 text-[14px] font-medium leading-[19px] text-ink-primary xl:mt-[max(4px,0.5cqw)] xl:whitespace-nowrap xl:text-[length:max(13px,0.88cqw)] xl:leading-[1.3]">
+                  {value}
+                </dd>
               </div>
             ))}
           </dl>
@@ -836,6 +845,29 @@ function HeroCover({ study, story, fadeUp, reduce }) {
   );
 }
 
+/* The seam between the parts of a study: the part's name set between two
+   hairlines in the accent green, each ending in a small dot by the name, with
+   room around it, so it reads as a change of chapter rather than one more
+   section. A section's `part` starts a new part that runs until the next one
+   is named; the sections before any `part` are "glance". */
+function PartBand({ label }) {
+  return (
+    <div className="relative flex items-center gap-4 py-12 sm:gap-6 lg:py-16">
+      <span aria-hidden="true" className="flex flex-1 items-center">
+        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-forest/45" />
+        <span className="h-1.5 w-1.5 rounded-full bg-forest/60" />
+      </span>
+      <h2 className="shrink-0 font-serif text-[22px] font-semibold leading-[28px] tracking-[-0.01em] text-forest lg:text-[28px] lg:leading-[34px]">
+        {label}
+      </h2>
+      <span aria-hidden="true" className="flex flex-1 items-center">
+        <span className="h-1.5 w-1.5 rounded-full bg-forest/60" />
+        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-forest/45" />
+      </span>
+    </div>
+  );
+}
+
 /* ---- page ---- */
 
 export default function CaseStudyStory({ study, story, onBack }) {
@@ -879,33 +911,42 @@ export default function CaseStudyStory({ study, story, onBack }) {
     const node = railSentinel.current;
     if (!node) return undefined;
 
-    /* Fourth attempt at this, so here is what actually goes wrong.
+    /* Fifth attempt, and the first four are worth recording because each one
+       failed differently.
 
-       An IntersectionObserver only fires when the target *crosses* the root
-       boundary. Watching a zero-height marker means that once it is thousands
-       of pixels above the viewport no further callback ever arrives, so a
-       reading taken before first paint — when the marker had not yet moved —
-       latches and never corrects. A scroll listener had the mirror-image bug.
+       1. A zero-height marker + IntersectionObserver: once it sat thousands of
+          pixels above the viewport no callback ever arrived again, so an early
+          reading latched.
+       2. A scroll listener that ran before the ref was attached: latched false
+          on its first run and never recovered.
+       3. A tall sentinel + a 21-step threshold ladder. This is the one that
+          looked right and was not: the sentinel is 7532px tall and 1px wide, so
+          its intersection ratio against the viewport is a sliver that barely
+          moves while scrolling. The thresholds almost never fire, measure() ran
+          once on mount when the answer was legitimately false, and the rail
+          stayed invisible for the whole page.
 
-       Observing a tall element instead gives a boundary that is continuously
-       being crossed while the reader moves through the story, so the state
-       stays honest: the wrapper's top edge is the thing we care about, and
-       it is tracked by giving the sentinel the wrapper's full height. */
+       So: no observer. The question is only "has the story reached the top of
+       the viewport", which is a scroll position, so read it from scroll. The
+       first-run ordering bug is avoided by measuring from a layout effect after
+       mount, not during render, and rAF-throttling keeps it off the scroll
+       critical path. */
+    let frame = 0;
     const measure = () => {
-      const top = node.getBoundingClientRect().top;
-      setRailReady(top <= 96);
+      frame = 0;
+      setRailReady(node.getBoundingClientRect().top <= 96);
     };
-    measure();
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
 
-    const observer = new IntersectionObserver(measure, {
-      // a tall stack of thresholds keeps the callback firing as it travels
-      threshold: Array.from({ length: 21 }, (_, i) => i / 20),
-    });
-    observer.observe(node);
-    window.addEventListener("resize", measure);
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
@@ -916,15 +957,16 @@ export default function CaseStudyStory({ study, story, onBack }) {
   return (
     <div className="min-h-screen bg-wall text-ink-primary">
       <header className="sticky top-0 z-30 border-b border-border/70 bg-wall/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex max-w-[1200px] items-center px-4 py-4 sm:px-6 lg:px-10">
+          {/* Straight from the home page this steps back in history, so the
+              visitor lands where they left off; otherwise it opens the top. */}
           <a
-            href="#work"
+            href="#top"
             onClick={onBack}
-            className="text-[13px] leading-[20px] inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-medium text-ink-primary transition-colors hover:bg-sage-pale"
+            className="group inline-flex items-center gap-2 py-1 text-[14px] font-medium leading-[20px] text-ink-primary underline-offset-4 transition-colors hover:text-forest hover:underline"
           >
-            <span aria-hidden="true">←</span> Back to case studies
+            <span aria-hidden="true" className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span> Back to home
           </a>
-          <span className="font-display text-2xl font-semibold tracking-tight">Nikita.</span>
         </div>
       </header>
 
@@ -947,6 +989,9 @@ export default function CaseStudyStory({ study, story, onBack }) {
 
             {sections.map((section, i) => (
               <Fragment key={section.id}>
+              {story.parts && (i === 0 || section.part) && (
+                <PartBand label={story.parts[section.part ?? "glance"]} />
+              )}
               <motion.section
                 id={`section-${section.id}`}
                 {...(reduce ? {} : { initial: { opacity: 0, y: 12 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-60px" }, transition: { duration: 0.4, ease: EASE } })}
@@ -967,7 +1012,7 @@ export default function CaseStudyStory({ study, story, onBack }) {
                   )}
                   {/* Hierarchy, not volume: 20px semibold carries a section
                       head at this measure without shouting over the body. */}
-                  <h2 className="mt-2.5 font-serif text-[20px] font-semibold leading-[28px] text-ink-primary">{section.title}</h2>
+                  <h2 className="mt-2.5 font-serif text-[18px] font-semibold leading-[26px] text-ink-primary">{section.title}</h2>
                   {section.standfirst && (
                     <p className="mt-3 max-w-[700px] text-[16px] leading-[1.6] text-ink-secondary">{section.standfirst}</p>
                   )}

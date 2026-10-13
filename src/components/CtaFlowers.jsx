@@ -1,4 +1,4 @@
-import { bloomCluster, bloomFern, bloomHydrangea, bloomRose, bloomSunflower, bloomTulip } from "../assets";
+import { bloomDaisy, bloomHydrangea, bloomPeony, bloomRose, bloomSunflower, bloomTulip } from "../assets";
 
 /* The flowers that arrive when you reach for the button.
 
@@ -13,11 +13,11 @@ import { bloomCluster, bloomFern, bloomHydrangea, bloomRose, bloomSunflower, blo
 
 const PETALS = [
   { src: bloomRose,      alt: "", cls: "left-[-2%] top-[-6%] w-[86px] sm:w-[104px]",      rest: "-translate-x-6 -translate-y-6 -rotate-12", delay: "delay-0" },
-  { src: bloomFern,      alt: "", cls: "left-[8%] bottom-[-14%] w-[76px] sm:w-[92px]",    rest: "-translate-x-5 translate-y-8 rotate-6",    delay: "delay-100" },
+  { src: bloomDaisy,     alt: "", cls: "left-[9%] bottom-[-14%] w-[70px] sm:w-[84px]",    rest: "-translate-x-5 translate-y-8 rotate-6",    delay: "delay-100" },
   { src: bloomHydrangea, alt: "", cls: "left-[26%] top-[-12%] w-[66px] sm:w-[78px]",      rest: "-translate-y-8 rotate-6",                  delay: "delay-75" },
   { src: bloomTulip,     alt: "", cls: "right-[24%] bottom-[-12%] w-[58px] sm:w-[70px]",  rest: "translate-y-8 -rotate-6",                  delay: "delay-150" },
   { src: bloomSunflower, alt: "", cls: "right-[6%] top-[-10%] w-[72px] sm:w-[88px]",      rest: "translate-x-5 -translate-y-7 rotate-12",   delay: "delay-100" },
-  { src: bloomCluster,   alt: "", cls: "right-[-3%] bottom-[-8%] w-[92px] sm:w-[112px]",  rest: "translate-x-6 translate-y-6 -rotate-6",    delay: "delay-200" },
+  { src: bloomPeony,     alt: "", cls: "right-[-3%] bottom-[-8%] w-[92px] sm:w-[112px]",  rest: "translate-x-6 translate-y-6 -rotate-6",    delay: "delay-200" },
 ];
 
 export default function CtaFlowers() {

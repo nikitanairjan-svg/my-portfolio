@@ -13,12 +13,13 @@ import layout from "../data/contactLayout.json";
 
 const EMAIL = "nikitanair.design@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/nikita-nair-4a9696214/";
+const RESUME = "/nikitanair-cv.pdf";
 
 const ART = layout.canvas;
 const CARD_META = {
   email: { label: "Email", href: `mailto:${EMAIL}` },
   linkedin: { label: "LinkedIn", href: LINKEDIN, external: true },
-  resume: { label: "Resume", disabled: true },
+  resume: { label: "Resume", href: RESUME, external: true },
 };
 const CARDS = layout.cards.map((box) => ({ id: box.id, box, ...CARD_META[box.id] }));
 
@@ -66,22 +67,6 @@ function Tile({ tile, index }) {
 
 function ArtCard({ card }) {
   const style = { ...place(card.box), ...slice(card.box, contactCards), borderRadius: radius };
-
-  if (card.disabled) {
-    return (
-      <div aria-disabled="true" title="Resume coming soon" className="absolute cursor-not-allowed" style={style}>
-        <span className="sr-only">Resume (coming soon)</span>
-        {/* fade the printed label, icon and arrow */}
-        <span aria-hidden="true" className="absolute inset-0 bg-[#EFE8DE]/55" style={{ borderRadius: radius }} />
-        <span
-          aria-hidden="true"
-          className="type-label absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 whitespace-nowrap rounded-full border border-border bg-surface px-2.5 py-1 text-ink-primary/65 shadow-sm"
-        >
-          Coming soon
-        </span>
-      </div>
-    );
-  }
 
   return (
     <a
@@ -163,29 +148,16 @@ function PhoneCard({ card }) {
   const icon =
     card.id === "email" ? <GmailIcon className="h-auto w-7" /> : card.id === "linkedin" ? <LinkedInIcon className="h-7 w-7" /> : <DocumentIcon className="h-7 w-7" />;
 
-  if (card.disabled) {
-    return (
-      <div aria-disabled="true" title="Resume coming soon" className={`${CARD_BASE} cursor-not-allowed`}>
-        <CardPegs />
-        <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center text-ink-primary/40">{icon}</span>
-        <span className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-[20px] font-semibold leading-7 text-ink-primary/45">
-          Resume
-          <span className="type-label rounded-full border border-border bg-surface px-2.5 py-1 font-medium text-ink-primary/60">Coming soon</span>
-        </span>
-        <ArrowIcon aria-hidden="true" className="h-6 w-6 shrink-0 text-ink-primary/25" />
-      </div>
-    );
-  }
-
   return (
     <a
       href={card.href}
+      aria-label={card.external ? `${card.label} (opens in a new tab)` : card.label}
       {...(card.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={`${CARD_BASE} transition duration-300 ease-out active:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forest`}
     >
       <CardPegs />
       <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center">{icon}</span>
-      <span className="flex-1 text-[20px] font-semibold leading-7 text-ink-primary">{card.label}</span>
+      <span className="flex-1 text-[18px] font-semibold leading-6 text-ink-primary">{card.label}</span>
       <ArrowIcon aria-hidden="true" className="h-6 w-6 shrink-0 text-ink-primary" />
     </a>
   );
@@ -194,7 +166,7 @@ function PhoneCard({ card }) {
 export default function Contact() {
   const crop = layout.tilesCrop;
   return (
-    <section id="contact" className="wall-surface">
+    <section id="contact" className="wall-surface scroll-mt-16 sm:scroll-mt-[72px]">
       <h2 className="sr-only">Okay, enough about me. Let’s connect.</h2>
 
       {/* md and up: the artwork in layers, with live tiles and cards */}

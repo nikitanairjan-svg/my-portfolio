@@ -46,6 +46,16 @@ function CardBody({ study }) {
           <Tags tags={study.tags} dark={dark} />
         </div>
         {/* Visual call to action; the whole card is the link */}
+        {study.inProgress ? (
+          <span
+            className={`type-label mt-8 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 font-medium ${
+              dark ? "border-white/25 text-white/80" : "border-ink-primary/20 bg-surface/60 text-ink-secondary"
+            }`}
+          >
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#C9893B]" />
+            Case study in progress
+          </span>
+        ) : (
         <span
           aria-hidden="true"
           className={`type-body-s mt-8 inline-flex w-fit items-center gap-2 font-medium underline decoration-1 underline-offset-[6px] transition-colors ${dark ? "text-surface decoration-white/40 group-hover/card:decoration-white" : "text-ink-primary decoration-ink-primary/30 group-hover/card:decoration-ink-primary"}`}
@@ -53,6 +63,7 @@ function CardBody({ study }) {
           View case study
           <span className="transition-transform duration-300 group-hover/card:translate-x-1">→</span>
         </span>
+        )}
       </div>
 
       <div className="relative h-[320px] sm:h-[420px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[64%]">
@@ -69,11 +80,13 @@ function Card({ study, className = "" }) {
       style={{ backgroundColor: study.theme.card }}
     >
       <CardBody study={study} />
-      <a
-        href={studyHref(study.slug)}
-        aria-label={`View case study: ${study.title}`}
-        className="absolute inset-0 z-20 rounded-3xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-forest"
-      />
+      {!study.inProgress && (
+        <a
+          href={studyHref(study.slug)}
+          aria-label={`View case study: ${study.title}`}
+          className="absolute inset-0 z-20 rounded-3xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-forest"
+        />
+      )}
     </article>
   );
 }
@@ -95,10 +108,14 @@ function StackedCard({ study, index }) {
         className="origin-top will-change-transform"
         // the pile reads as depth, so a hovered card lifts clear of it
       >
-        <div className="relative transition-transform duration-300 ease-out hover:-translate-y-1.5">
+        <div className={`relative transition-transform duration-300 ease-out ${study.inProgress ? "" : "hover:-translate-y-1.5"}`}>
           <Card
             study={study}
-            className="shadow-[0_2px_6px_rgba(24,32,30,0.06),0_24px_48px_-28px_rgba(24,32,30,0.45)] transition-shadow duration-300 group-hover/card:shadow-[0_6px_14px_rgba(24,32,30,0.1),0_40px_72px_-30px_rgba(24,32,30,0.6)] hover:[--tilt-x:2deg] hover:[--tilt-y:4deg]"
+            className={`shadow-[0_2px_6px_rgba(24,32,30,0.06),0_24px_48px_-28px_rgba(24,32,30,0.45)] transition-shadow duration-300 ${
+              study.inProgress
+                ? ""
+                : "group-hover/card:shadow-[0_6px_14px_rgba(24,32,30,0.1),0_40px_72px_-30px_rgba(24,32,30,0.6)] hover:[--tilt-x:2deg] hover:[--tilt-y:4deg]"
+            }`}
           />
           {/* the covered card dims a little, so the top of the pile stays the
               one you are reading */}
@@ -114,7 +131,6 @@ function StackedCard({ study, index }) {
 }
 
 const HEADER = {
-  eyebrow: "Real products. Thoughtful solutions.",
   title: "Case studies",
   subtitle: "A closer look at the problems I’ve worked on and how I approach them.",
 };
@@ -123,7 +139,7 @@ export default function CaseStudies() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="work" className="wall-surface text-ink-primary">
+    <section id="work" className="wall-surface text-ink-primary scroll-mt-16 sm:scroll-mt-[72px]">
       <div className="px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
         <div className="mx-auto max-w-[1200px]">
           <SectionHeader {...HEADER} />

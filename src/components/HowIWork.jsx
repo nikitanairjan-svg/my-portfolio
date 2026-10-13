@@ -153,7 +153,7 @@ function Note({ step }) {
               <path d="M1 5.5C12 2.5 26 6 39 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <Icon aria-hidden="true" className="mx-auto mt-4 h-[60px] w-[60px] text-ink-primary" />
-            <h3 className="font-display mt-6 text-[22px] font-semibold leading-[28px] tracking-[-0.01em] text-ink-primary xl:text-[26px] xl:leading-[32px]">
+            <h3 className="font-display mt-6 text-[20px] font-semibold leading-[26px] tracking-[-0.01em] text-ink-primary xl:text-[23px] xl:leading-[29px]">
               {step.title}
             </h3>
             <p className="type-body-s mt-3 text-ink-primary/70">{step.description}</p>
@@ -189,7 +189,7 @@ export default function HowIWork() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="approach" className="wall-surface overflow-hidden px-4 py-20 text-ink-primary sm:px-6 lg:px-10 lg:py-30">
+    <section id="approach" className="wall-surface scroll-mt-16 sm:scroll-mt-[72px] overflow-hidden px-4 py-20 text-ink-primary sm:px-6 lg:px-10 lg:py-30">
       <motion.div
         ref={ref}
         className="relative mx-auto max-w-[1200px]"
@@ -200,11 +200,10 @@ export default function HowIWork() {
           as={motion.header}
           variants={rise}
           custom={T.header}
+          eyebrow="My process"
           title="How I work"
           subtitle="From questions to thoughtful solutions."
-        >
-          <div className="mt-8 h-px w-14 bg-ink-primary/40" />
-        </SectionHeader>
+        />
 
         <ol className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-4 lg:gap-8">
           {STEPS.map((step, i) => (

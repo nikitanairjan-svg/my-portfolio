@@ -60,15 +60,16 @@ function OutlinePage({ study, next, onBack }) {
   return (
     <div className="min-h-screen bg-canvas text-ink-primary">
       <header className="sticky top-0 z-20 border-b border-border/70 bg-canvas/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex max-w-[1200px] items-center px-4 py-4 sm:px-6 lg:px-10">
+          {/* Straight from the home page this steps back in history, so the
+              visitor lands where they left off; otherwise it opens the top. */}
           <a
-            href="#work"
+            href="#top"
             onClick={onBack}
-            className="type-body-s inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 font-medium text-ink-primary transition-colors hover:bg-sage-pale"
+            className="group inline-flex items-center gap-2 py-1 text-[14px] font-medium leading-[20px] text-ink-primary underline-offset-4 transition-colors hover:text-forest hover:underline"
           >
-            <span aria-hidden="true">←</span> Back to case studies
+            <span aria-hidden="true" className="transition-transform duration-200 group-hover:-translate-x-0.5">←</span> Back to home
           </a>
-          <span className="font-display text-2xl font-semibold tracking-tight">Nikita.</span>
         </div>
       </header>
 

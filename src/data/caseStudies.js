@@ -13,7 +13,10 @@ import {
 /* Case studies, in the order they stack.
    theme.card: card background · theme.tone: "light" | "dark" text
    media.kind: "phones" (tall mobile screens) | "screen" (one desktop screen in a frame)
-   details: PLACEHOLDER content for the detail page — replace with the real case study. */
+   details: PLACEHOLDER content for the detail page — replace with the real case study.
+   inProgress: the card still shows, marked as in progress, but nothing links
+   to the study and its URL sends visitors back to the case studies. Delete the
+   flag to publish it. */
 export const caseStudies = [
   {
     slug: "shipthis",
@@ -28,6 +31,7 @@ export const caseStudies = [
   },
   {
     slug: "ax-flow",
+    inProgress: true,
     company: "TriNet",
     title: "AX Flow",
     description: "Designing an AI assistant that helps employees get HR tasks done through conversation.",
@@ -78,4 +82,13 @@ const NEXT_STUDY = {
   "bloom-craft": "shipthis",
 };
 
-export const nextStudy = (slug) => caseStudies.find((s) => s.slug === NEXT_STUDY[slug]) ?? caseStudies[0];
+// Follows the chain past any study still in progress.
+export function nextStudy(slug) {
+  let next = NEXT_STUDY[slug];
+  for (let i = 0; i < caseStudies.length; i++) {
+    const study = caseStudies.find((s) => s.slug === next);
+    if (study && !study.inProgress) return study;
+    next = NEXT_STUDY[next];
+  }
+  return caseStudies.find((s) => !s.inProgress);
+}

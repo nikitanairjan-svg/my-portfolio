@@ -45,6 +45,8 @@ const SKETCH_WIDE = { w: 1500, h: 1125 };
 
 export const shipthisStory = {
   // the finished cover: scene and typography composed together, shown as-is
+  // the two parts of the page, each opened by a full-width band (see PartBand)
+  parts: { glance: "At a glance", process: "The process" },
   heroLayout: "composite",
   cover: {
     src: shipthisHeroCover,
@@ -57,7 +59,7 @@ export const shipthisStory = {
   meta: [
     ["Domain", "Logistics"],
     ["Type", "SaaS"],
-    ["Role", "Product Designer"],
+    ["Role", "UX Researcher & Designer"],
   ],
 
   sections: [

@@ -28,7 +28,7 @@ export { default as travelUdaipur } from "./travel/travel-udaipur.webp";
 
 // Case studies (optimized WebP versions)
 export { default as axFlowBg } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-bg-opt.webp";
-export { default as axFlowHeroCover } from "../../portfolio-assets/case-studies/ax-flow/hero-cover-opt.webp";
+export { default as axFlowHeroCover } from "../../portfolio-assets/case-studies/ax-flow/hero-bg-opt.webp";
 export { default as axFlowVisual1 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual1-opt.webp";
 export { default as axFlowVisual2 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual2-opt.webp";
 export { default as shipthisBg } from "../../portfolio-assets/case-studies/shipthis/shipthis-bg-opt.webp";
@@ -43,17 +43,18 @@ export { default as bloomCraftVisual } from "../../portfolio-assets/case-studies
 // warped onto the laptop and the baked-in text removed (text is live HTML).
 export { default as shipthisForwarderFlow } from "../../portfolio-assets/case-studies/shipthis/detail/forwarder-flow-opt.webp";
 export { default as shipthisHeroScene } from "../../portfolio-assets/case-studies/shipthis/detail/hero-scene-opt.webp";
-// the finished covers: scene + typography, composed by the designer
-export { default as shipthisHeroCover } from "../../portfolio-assets/case-studies/shipthis/detail/hero-cover-opt.webp";
-export { default as hcHeroCover } from "../../portfolio-assets/case-studies/hc-robotics/detail/hero-cover-opt.webp";
-export { default as bloomCraftHeroCover } from "../../portfolio-assets/case-studies/bloom-craft/hero-cover-opt.webp";
-// cut from the app's own artwork, for the call to action
-export { default as bloomRose } from "../../portfolio-assets/case-studies/bloom-craft/blooms/rose.webp";
-export { default as bloomHydrangea } from "../../portfolio-assets/case-studies/bloom-craft/blooms/hydrangea.webp";
-export { default as bloomTulip } from "../../portfolio-assets/case-studies/bloom-craft/blooms/tulip.webp";
-export { default as bloomSunflower } from "../../portfolio-assets/case-studies/bloom-craft/blooms/sunflower.webp";
-export { default as bloomCluster } from "../../portfolio-assets/case-studies/bloom-craft/blooms/cluster.webp";
-export { default as bloomFern } from "../../portfolio-assets/case-studies/bloom-craft/blooms/fern.webp";
+// the covers with their baked-in type removed (scripts/erase-cover-text.py);
+// the title, tagline and metadata are set over them as live text
+export { default as shipthisHeroCover } from "../../portfolio-assets/case-studies/shipthis/detail/hero-bg-opt.webp";
+export { default as hcHeroCover } from "../../portfolio-assets/case-studies/hc-robotics/detail/hero-bg-opt.webp";
+export { default as bloomCraftHeroCover } from "../../portfolio-assets/case-studies/bloom-craft/hero-bg-opt.webp";
+// the app's own flower artwork (Build-a-bouquet-app/public/flowers), for the call to action
+export { default as bloomRose } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/rose.webp";
+export { default as bloomPeony } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/peony.webp";
+export { default as bloomHydrangea } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/hydrangea.webp";
+export { default as bloomTulip } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/tulip.webp";
+export { default as bloomSunflower } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/sunflower.webp";
+export { default as bloomDaisy } from "../../portfolio-assets/case-studies/bloom-craft/app-flowers/daisy.webp";
 // The freight-forwarder journey, supplied as artwork with its ground keyed out
 // so it sits directly on the section.
 
