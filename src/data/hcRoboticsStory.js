@@ -1,4 +1,5 @@
 import {
+  hcProductFlow,
   hcFeatureLayoutsLoop,
   hcFeatureMagnify,
   hcFeatureToolbox,
@@ -50,8 +51,8 @@ export const hcRoboticsStory = {
   cover: {
     src: hcHeroCover,
     alt: "HC Robotics open on a laptop beside a LiDAR point-cloud scan of a residential street",
-    w: 1983,
-    h: 793,
+    w: 2000,
+    h: 800,
   },
   tagline:
     "A LiDAR-powered platform that helps design engineers map and assess streetlight and electrical pole infrastructure. Engineers identify individual poles and capture key attributes such as height, span and anchor to evaluate pole health.",
@@ -89,11 +90,15 @@ export const hcRoboticsStory = {
           text: "The work on the platform is to identify each electrical pole and add its information (height, span, anchor), which is what determines whether the pole is healthy.",
         },
         {
-          /* Was a flat export of a white slide, which could not be read on a
-             phone and repeated — word for word — the bullet list that used to
-             sit above it. Rebuilt in the page's own palette, so the four
-             stages are real text and the list is no longer needed. */
-          type: "lidarFlow",
+          // the supplied four-step visual: scanning, point cloud, import, mapping.
+          // Shown exactly as supplied, wider than the text column so its small
+          // type stays readable.
+          type: "plate",
+          wide: true,
+          src: hcProductFlow,
+          alt: "From LiDAR to mapped poles in four steps: a roof-mounted LiDAR camera scans the street, the raw data becomes a 3D point cloud, the scan is imported into HC Robotics with its point cloud layers, and design engineers map each pole's height, span and base",
+          w: 2000,
+          h: 800,
         },
       ],
     },

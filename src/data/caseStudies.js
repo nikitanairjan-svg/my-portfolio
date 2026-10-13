@@ -16,7 +16,8 @@ import {
    details: PLACEHOLDER content for the detail page — replace with the real case study.
    inProgress: the card still shows, marked as in progress, but nothing links
    to the study and its URL sends visitors back to the case studies. Delete the
-   flag to publish it. */
+   flag to publish it; `!import.meta.env.DEV` keeps a study open locally while
+   it is being written. */
 export const caseStudies = [
   {
     slug: "shipthis",
@@ -30,8 +31,18 @@ export const caseStudies = [
     details: { platform: "Web app" },
   },
   {
+    slug: "hc-robotics",
+    company: "Divami",
+    title: "HC Robotics",
+    description: "Making complex geospatial tools easier to navigate.",
+    tags: ["Product Design", "Geospatial", "3D Visualization"],
+    theme: { card: "#18201E", tone: "dark" },
+    media: { kind: "screen", frame: "dark", bg: hcRoboticsBg, screens: [hcRoboticsVisual], alt: ["HC Robotics pole measurement workspace"] },
+    note: ["20+ tools", "simplified into", "one workflow"],
+    details: { platform: "Web app" },
+  },
+  {
     slug: "ax-flow",
-    inProgress: true,
     company: "TriNet",
     title: "AX Flow",
     description: "Designing an AI assistant that helps employees get HR tasks done through conversation.",
@@ -45,17 +56,6 @@ export const caseStudies = [
     },
     note: ["From questions", "to actions."],
     details: { platform: "Mobile app" },
-  },
-  {
-    slug: "hc-robotics",
-    company: "Divami",
-    title: "HC Robotics",
-    description: "Making complex geospatial tools easier to navigate.",
-    tags: ["Product Design", "Geospatial", "3D Visualization"],
-    theme: { card: "#18201E", tone: "dark" },
-    media: { kind: "screen", frame: "dark", bg: hcRoboticsBg, screens: [hcRoboticsVisual], alt: ["HC Robotics pole measurement workspace"] },
-    note: ["20+ tools", "simplified into", "one workflow"],
-    details: { platform: "Web app" },
   },
   {
     slug: "bloom-craft",
@@ -72,7 +72,7 @@ export const caseStudies = [
 
 export const studyHref = (slug) => `#/work/${slug}`;
 
-/* The order the cards stack in is fixed (01 ShipThis → 04 Bloom Craft) and the
+/* The order the cards stack in is fixed (ShipThis, HC Robotics, AX Flow, Bloom Craft) and the
    archive depends on it, so the reading order through the studies is kept as a
    separate chain rather than being taken from the array. */
 const NEXT_STUDY = {

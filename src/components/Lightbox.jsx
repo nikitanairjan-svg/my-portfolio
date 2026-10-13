@@ -4,8 +4,10 @@ import { createPortal } from "react-dom";
 
 /* Full-size viewer for a set of images.
 
-   Opens on the one you clicked and steps through the rest with the arrows, the
-   keyboard, or the thumbnails. It is a modal dialog: focus is trapped to it,
+   Opens on the one you clicked and steps through the rest with the round
+   arrows either side of it, the dots, or the arrow keys. The counter sits
+   centred above the image, level with the close button; the caption and the
+   dots sit under the image in their own space, so nothing overlaps it. It is a modal dialog: focus is trapped to it,
    Escape closes, the page behind cannot scroll, and the arrow keys move. It
    renders through a portal so no ancestor's overflow or transform can clip it. */
 
@@ -63,15 +65,19 @@ export default function Lightbox({ images, index, onClose, onIndex }) {
           {/* clicking the ground closes; the figure stops the bubble */}
           <button type="button" aria-label="Close viewer" onClick={onClose} className="absolute inset-0 cursor-zoom-out" />
 
-          <div className="pointer-events-none relative z-10 flex items-center justify-between px-5 py-4">
-            <span className="text-[13px] tabular-nums text-white/70">
-              {index + 1} / {count}
-            </span>
+          {/* the counter sits centred above the image, on the same line as
+              the close button at the right */}
+          <div className="pointer-events-none relative z-10 flex items-center justify-center px-5 py-4">
+            {count > 1 && (
+              <span className="rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium tabular-nums text-white/85">
+                {index + 1}/{count}
+              </span>
+            )}
             <button
               type="button"
               onClick={onClose}
               aria-label="Close viewer"
-              className="pointer-events-auto grid h-9 w-9 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
+              className="pointer-events-auto absolute right-5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 <path d="M6 6l12 12M18 6L6 18" />
@@ -79,7 +85,15 @@ export default function Lightbox({ images, index, onClose, onIndex }) {
             </button>
           </div>
 
-          <figure className="pointer-events-none relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-2">
+          {/* the image alone takes the free height, so nothing below it can
+              ever sit on top of it */}
+          <figure className="pointer-events-none relative z-10 flex min-h-0 flex-1 items-center justify-center gap-3 px-3 sm:gap-5 sm:px-5">
+            {/* the arrows sit beside the image, never over it */}
+            {count > 1 && (
+              <span className="pointer-events-auto">
+                <Step dir={-1} onClick={() => step(-1)} />
+              </span>
+            )}
             <AnimatePresence initial={false} mode="wait">
               <motion.img
                 key={current.src}
@@ -89,37 +103,43 @@ export default function Lightbox({ images, index, onClose, onIndex }) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={reduce ? {} : { opacity: 0, scale: 0.985 }}
                 transition={{ duration: reduce ? 0 : 0.22, ease: EASE }}
-                className="max-h-full max-w-[min(1400px,94vw)] rounded-lg object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+                className="max-h-full min-w-0 max-w-[min(1400px,calc(100vw-140px))] rounded-lg object-contain shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
               />
             </AnimatePresence>
-            {current.caption && (
-              <figcaption className="mt-4 max-w-[62ch] text-center text-[13px] leading-[20px] text-white/70">{current.caption}</figcaption>
+            {count > 1 && (
+              <span className="pointer-events-auto">
+                <Step dir={1} onClick={() => step(1)} />
+              </span>
             )}
           </figure>
 
-          {count > 1 && (
-            <>
-              <Arrow side="left" onClick={() => step(-1)} label="Previous image" />
-              <Arrow side="right" onClick={() => step(1)} label="Next image" />
+          {/* below the image, in its own space: caption, position, controls */}
+          <div className="pointer-events-none relative z-10 flex flex-col items-center px-5 pb-6 pt-5">
+            {current.caption && <p className="max-w-[62ch] text-center text-[14px] leading-[21px] text-white/80">{current.caption}</p>}
 
-              <div className="relative z-10 flex items-center justify-center gap-2 overflow-x-auto px-5 pb-5 pt-1">
-                {images.map((img, i) => (
-                  <button
-                    key={img.src}
-                    type="button"
-                    aria-label={`Show image ${i + 1}`}
-                    aria-current={i === index ? "true" : undefined}
-                    onClick={() => onIndex(i)}
-                    className={`h-12 w-16 shrink-0 overflow-hidden rounded border transition-opacity ${
-                      i === index ? "border-white opacity-100" : "border-white/25 opacity-55 hover:opacity-85"
-                    }`}
-                  >
-                    <img src={img.src} alt="" aria-hidden="true" className="h-full w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
+            {count > 1 && (
+              <>
+                <div className={`pointer-events-auto flex max-w-full items-center ${current.caption ? "mt-4" : ""}`}>
+                  <div className="flex min-w-0 items-center justify-center gap-0.5 sm:gap-1">
+                    {images.map((img, i) => (
+                      <button
+                        key={img.src + i}
+                        type="button"
+                        aria-label={`Show image ${i + 1}`}
+                        aria-current={i === index ? "true" : undefined}
+                        onClick={() => onIndex(i)}
+                        className="grid h-6 w-5 shrink-0 place-items-center sm:w-6"
+                      >
+                        <span
+                          className={`block h-2 rounded-full transition-all duration-300 ${i === index ? "w-5 bg-white" : "w-2 bg-white/35 hover:bg-white/60"}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>,
@@ -127,19 +147,17 @@ export default function Lightbox({ images, index, onClose, onIndex }) {
   );
 }
 
-function Arrow({ side, onClick, label }) {
-  const left = side === "left";
+function Step({ dir, onClick }) {
+  const back = dir < 0;
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={label}
-      className={`absolute top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10 ${
-        left ? "left-4" : "right-4"
-      }`}
+      aria-label={back ? "Previous image" : "Next image"}
+      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/10"
     >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        {left ? <path d="M15 5l-7 7 7 7" /> : <path d="M9 5l7 7-7 7" />}
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {back ? <path d="M15 5l-7 7 7 7" /> : <path d="M9 5l7 7-7 7" />}
       </svg>
     </button>
   );

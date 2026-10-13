@@ -5,6 +5,7 @@ import SignatureIntro from "./components/SignatureIntro";
 import Pegboard from "./components/Pegboard";
 import TravelModal from "./components/TravelModal";
 import CaseStudies from "./components/CaseStudies";
+import KpiStrip from "./components/KpiStrip";
 import CaseStudyPage from "./components/CaseStudyPage";
 import HowIWork from "./components/HowIWork";
 import Contact from "./components/Contact";
@@ -87,6 +88,7 @@ export default function App() {
         <Pegboard onOpenTravel={setOpenIndex} />
       </main>
 
+      <KpiStrip />
       <CaseStudies />
       <HowIWork />
       <Contact />

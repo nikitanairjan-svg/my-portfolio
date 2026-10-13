@@ -21,8 +21,8 @@ export const bloomCraftStory = {
   cover: {
     src: bloomCraftHeroCover,
     alt: "Bloom Craft open on a laptop beside fresh flowers, with a bouquet being arranged on screen",
-    w: 1983,
-    h: 793,
+    w: 2000,
+    h: 800,
   },
   tagline:
     "A digital bouquet builder that lets users create beautiful, personalised flower arrangements. Choose from a variety of stems, wrapping styles and colours, add a note, and share or download your custom bouquet.",

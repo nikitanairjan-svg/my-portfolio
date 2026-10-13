@@ -5,6 +5,9 @@ import BrowseProjects from "./BrowseProjects";
 import Carousel from "./Carousel";
 import Lightbox from "./Lightbox";
 import ImageSet from "./ImageSet";
+import PhoneJourney from "./PhoneJourney";
+import AxDecisions from "./AxDecisions";
+import AxDocs from "./AxDocs";
 import ForwarderFlow from "./ForwarderFlow";
 import LidarFlow from "./LidarFlow";
 import CtaFlowers from "./CtaFlowers";
@@ -89,7 +92,7 @@ function CtxIcon({ id, className = "h-6 w-6" }) {
 const FIGURE_BLOCKS = new Set([
   "plate", "toolflow", "painpoints", "image", "gallery", "cards", "metrics",
   "facts", "factCards", "list", "steps", "decisions", "problems", "status",
-  "carousel", "grid", "featured", "glanceCards", "insightCards", "decisionGrid", "flow",
+  "carousel", "phoneJourney", "axDecisions", "grid", "featured", "glanceCards", "insightCards", "decisionGrid", "flow",
 ]);
 const OPENS_GROUP = new Set(["subsection", "heading"]);
 // Layouts that already hold their own copy, so they open at full distance
@@ -215,7 +218,14 @@ function Block({ block, reduce }) {
           loading="lazy"
           decoding="async"
           draggable={false}
-          className="mx-auto block w-full max-w-[1120px]"
+          className={`block ${
+            // wide: breaks out of the text column, centred on it, up to 1120px, but
+            // keeps clear of the section rail in the left margin (never narrower
+            // than the column itself)
+            block.wide
+              ? "relative left-1/2 w-[max(100%,min(1120px,calc(100vw-300px)))] max-w-none -translate-x-1/2"
+              : "mx-auto w-full max-w-[1120px]"
+          }`}
           /* Artwork that carries empty canvas below its content leaves a
              phantom gap under the figure. Pull that back by the measured
              inset — as a percentage, so it tracks the rendered scale
@@ -373,6 +383,14 @@ function Block({ block, reduce }) {
     case "carousel":
       return <Carousel images={block.images} caption={block.caption} />;
 
+    /* A run of phone screens in order, each captioned with its step. */
+    case "phoneJourney":
+      return <PhoneJourney screens={block.screens} caption={block.caption} />;
+
+    // A heading inside a section, for a second topic that shares it.
+    case "subsection":
+      return <h3 className="font-serif text-[16px] font-semibold leading-[24px] text-ink-primary">{block.title}</h3>;
+
     // A tight grid of equal tiles — for sets where seeing them together is the
     // point (sketch variations, research artefacts) rather than one at a time.
     case "grid":
@@ -472,7 +490,7 @@ function Block({ block, reduce }) {
         <ol className="grid gap-x-10 gap-y-5 sm:grid-cols-2">
           {block.items.map((item, i) => (
             <li key={item} className="flex gap-4">
-              <span className="font-serif text-[20px] font-semibold leading-[26px] tabular-nums text-forest/45">
+              <span className="w-8 shrink-0 font-serif text-[20px] font-semibold leading-[26px] tabular-nums text-forest/45">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="min-w-0 flex-1 text-[15px] leading-[1.6] text-ink-primary/80">{item}</span>
@@ -567,10 +585,17 @@ function Block({ block, reduce }) {
       return (
         <ul className="grid gap-4 sm:grid-cols-3">
           {block.items.map((item, i) => (
-            <li key={item.title} className="rounded-2xl border border-border bg-surface p-6">
-              <span className="type-label tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>
-              <p className="mt-3 font-serif font-semibold text-ink-primary [font-size:clamp(16px,1.3vw,19px)] [line-height:1.25]">{item.title}</p>
-              <p className="text-[13px] leading-[20px] mt-2.5 text-ink-secondary">{item.text}</p>
+            <li key={item.title ?? item.text} className={`rounded-2xl border border-border bg-surface p-6 ${block.tall ? "sm:min-h-[180px] sm:px-7 sm:pt-9" : ""}`}>
+              {!block.plain && <span className="type-label tabular-nums text-ink-subtle">{String(i + 1).padStart(2, "0")}</span>}
+              {item.title ? (
+                <>
+                  <p className={`${block.plain ? "" : "mt-3 "}font-serif font-semibold text-ink-primary [font-size:clamp(16px,1.3vw,19px)] [line-height:1.25]`}>{item.title}</p>
+                  <p className={`mt-2.5 text-ink-secondary ${block.tall ? "text-[15px] leading-[22px]" : "text-[13px] leading-[20px]"}`}><Rich text={item.text} /></p>
+                </>
+              ) : (
+                // a card that is one line: the line itself carries the weight
+                <p className={`${block.plain ? "" : "mt-3 "}text-[16px] leading-[1.55] text-ink-primary/80`}><Rich text={item.text} /></p>
+              )}
             </li>
           ))}
         </ul>
@@ -583,7 +608,25 @@ function Block({ block, reduce }) {
         <ul className="grid gap-5 sm:grid-cols-2">
           {block.items.map((item) => (
             <li key={item.title} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-              {item.src && (
+              {item.src && item.phone ? (
+                /* a phone screen: its top half rising out of a tinted panel,
+                   enough to recognise the screen without a full-height phone */
+                <div className="relative aspect-[16/9] overflow-hidden bg-sage-pale/60">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={item.w}
+                    height={item.h}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    // peek: how far up the screen to slide, as a share of its
+                    // height, for screens whose subject sits below the fold
+                    style={item.peek ? { translate: `-50% -${item.peek}%` } : undefined}
+                    className="absolute left-1/2 top-6 w-[44%] -translate-x-1/2 rounded-t-[18px] shadow-[0_10px_28px_-10px_rgba(24,32,30,0.35)] ring-1 ring-black/5"
+                  />
+                </div>
+              ) : item.src ? (
                 <img
                   src={item.src}
                   alt={item.alt}
@@ -594,7 +637,7 @@ function Block({ block, reduce }) {
                   draggable={false}
                   className="aspect-[16/9] w-full bg-canvas object-cover"
                 />
-              )}
+              ) : null}
               <div className="flex flex-1 flex-col p-6">
                 <span className="flex items-center gap-2.5">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sage-pale text-forest">
@@ -602,12 +645,46 @@ function Block({ block, reduce }) {
                   </span>
                   <span className="font-serif font-semibold text-ink-primary [font-size:clamp(15px,1.2vw,17px)]">{item.title}</span>
                 </span>
-                <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary">{item.text}</p>
+                <p className="text-[13px] leading-[20px] mt-3 text-ink-secondary"><Rich text={item.text} /></p>
+                {/* where the same pattern goes next, so it reads as a principle */}
+                {item.beyond && (
+                  <div className="mt-auto pt-4">
+                    <p className="border-t border-border pt-4 text-[12px] leading-[18px]">
+                      <span className="block font-semibold uppercase tracking-[0.16em] text-forest">Beyond Time Off</span>
+                      <span className="mt-1 block text-ink-secondary">{item.beyond}</span>
+                    </p>
+                  </div>
+                )}
               </div>
             </li>
           ))}
         </ul>
       );
+
+    /* AX Flow's decisions: each pattern's diagram beside its screen. */
+    case "axDecisions":
+      return <AxDecisions items={block.items} />;
+
+    /* AX Flow's interaction library, documented one component at a time. */
+    case "axDocs":
+      return <AxDocs items={block.items} footer={block.footer} />;
+
+    // A few headline points, each in a soft tinted box, under an intro.
+    case "keyPoints":
+      return (
+        <ul className="grid gap-3 sm:grid-cols-3">
+          {block.items.map((item) => (
+            <li key={item.title} className="rounded-2xl bg-[#DDE4D8] px-5 py-5">
+              <p className="font-serif text-[15px] font-semibold leading-[22px] text-ink-primary">{item.title}</p>
+              {item.text && <p className="mt-1.5 text-[13px] leading-[20px] text-ink-primary/70">{item.text}</p>}
+            </li>
+          ))}
+        </ul>
+      );
+
+    /* An interaction library, one pattern family at a time. */
+    case "patterns":
+      return <PatternGroup items={block.items} boards={block.boards} reduce={reduce} />;
 
     // The walkthrough as a row of steps rather than a numbered paragraph.
     case "flow":
@@ -664,7 +741,13 @@ function FeatureRow({ block, onOpen }) {
         </div>
 
         <div className={`min-w-0 ${block.flip ? "lg:order-1" : ""}`}>
-          {(
+          {!block.src ? (
+            /* A feature whose screen isn't ready yet keeps its place in the
+               layout, so the study reads the same before and after. */
+            <div className="grid aspect-[16/10] w-full place-items-center rounded-xl border border-dashed border-ink-primary/20 bg-surface/60">
+              <span className="text-[13px] font-medium text-ink-subtle">Screen coming soon</span>
+            </div>
+          ) : (
             <button
               type="button"
               onClick={onOpen}
@@ -701,18 +784,94 @@ function FeatureRow({ block, onOpen }) {
   );
 }
 
+/* One pattern family per row: what it is for, the rules it follows, and the
+   pattern in use on a phone, on the page's own tint rather than the library's
+   slate board. The board itself is a click away, and the viewer steps through
+   every board in the library. Rows alternate sides like the features do. */
+function PatternGroup({ items, boards, reduce }) {
+  const [open, setOpen] = useState(null);
+  return (
+    <div className="flex flex-col gap-14 lg:gap-20">
+      {items.map((item, i) => {
+        const flip = i % 2 === 1;
+        return (
+          <motion.div
+            key={item.title}
+            {...(reduce ? {} : { initial: { opacity: 0, y: 16 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-80px" }, transition: { duration: 0.5, ease: EASE } })}
+            className={`grid items-center gap-8 lg:gap-12 ${flip ? "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]"}`}
+          >
+            <div className={`min-w-0 ${flip ? "lg:order-2" : ""}`}>
+              <h3 className="font-serif text-[18px] font-semibold leading-[26px] text-ink-primary">{item.title}</h3>
+              <p className="mt-3 text-[16px] leading-[1.6] text-ink-secondary">
+                <Rich text={item.text} />
+              </p>
+              {item.rules && (
+                <ul className="mt-5 flex flex-col gap-2.5 border-l border-forest/25 pl-4">
+                  {item.rules.map((rule) => (
+                    <li key={rule} className="text-[14px] leading-[1.55] text-ink-primary/75">
+                      <Rich text={rule} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <figure className={`min-w-0 ${flip ? "lg:order-1" : ""}`}>
+              <div className="flex items-center justify-center gap-3 rounded-3xl bg-sage-pale/70 px-4 py-7 sm:gap-5 sm:px-8 sm:py-9">
+                {item.phones.map((ph) => (
+                  <img
+                    key={ph.src}
+                    src={ph.src}
+                    alt={ph.alt}
+                    width={390}
+                    height={851}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    // whole phones: half of these patterns live in a bottom
+                    // drawer, so any crop hides the very thing being shown
+                    className="block min-w-0 rounded-[16px] shadow-[0_12px_30px_-14px_rgba(24,32,30,0.4)]"
+                    style={{ width: item.phones.length > 2 ? "min(31%,150px)" : "min(44%,180px)" }}
+                  />
+                ))}
+              </div>
+              <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[13px] leading-[20px]">
+                <span className="text-ink-subtle">{item.caption}</span>
+                <button
+                  type="button"
+                  onClick={() => setOpen(item.board)}
+                  className="inline-flex items-center gap-1.5 font-medium text-ink-primary underline decoration-ink-primary/25 underline-offset-4 hover:decoration-ink-primary"
+                >
+                  View the full board
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 17 17 7M9 7h8v8" />
+                  </svg>
+                </button>
+              </figcaption>
+            </figure>
+          </motion.div>
+        );
+      })}
+      <Lightbox images={boards} index={open} onClose={() => setOpen(null)} onIndex={setOpen} />
+    </div>
+  );
+}
+
 /* All of a section's features share one viewer, so opening any still screen
    lets you step through the rest of that section — not just the one clicked. */
 function FeatureGroup({ blocks }) {
   const [open, setOpen] = useState(null);
   // Every feature opens, animations included — a looping WebP enlarges and
   // keeps playing, so there is no reason to exclude it from the viewer.
-  const images = blocks.map((b) => ({ src: b.src, alt: b.alt, caption: b.title }));
+  // Features without a screen yet are left out, so the viewer never steps
+  // onto an empty slide.
+  const shown = blocks.filter((b) => b.src);
+  const images = shown.map((b) => ({ src: b.src, alt: b.alt, caption: b.title }));
 
   return (
     <div className="flex flex-col gap-14 lg:gap-20">
-      {blocks.map((block, i) => (
-        <FeatureRow key={block.title} block={block} onOpen={() => setOpen(i)} />
+      {blocks.map((block) => (
+        <FeatureRow key={block.title} block={block} onOpen={() => setOpen(shown.indexOf(block))} />
       ))}
       <Lightbox images={images} index={open} onClose={() => setOpen(null)} onIndex={setOpen} />
     </div>
@@ -756,31 +915,31 @@ function HeroComposite({ study, story, fadeUp, reduce }) {
           small to read; below xl it drops under the image. */}
       <motion.div
         {...fadeUp}
-        className="px-5 pb-2 pt-8 sm:px-8 xl:absolute xl:inset-y-0 xl:left-[7cqw] xl:flex xl:flex-col xl:justify-center xl:p-0"
+        className="px-5 pb-2 pt-8 sm:px-8 xl:absolute xl:inset-y-0 xl:left-[7cqw] xl:flex xl:flex-col xl:justify-center xl:p-0 xl:pb-[5cqw]"
       >
-        <div className="xl:w-[max(31cqw,340px)]">
+        <div className="xl:w-[max(30cqw,420px)]">
           <h1 className="font-display text-[36px] font-medium leading-[1.08] tracking-[-0.025em] xl:whitespace-nowrap text-[#141a17] xl:text-[length:max(40px,4.6cqw)]">
             {study.title}
           </h1>
-          <p className="mt-5 max-w-[520px] text-[16px] leading-[1.6] text-[#4a504c] xl:mt-[max(14px,1.5cqw)] xl:max-w-none xl:text-[length:max(15px,1.1cqw)] xl:leading-[1.45]">
+          <p className="mt-5 max-w-[520px] whitespace-pre-line text-[16px] leading-[1.6] text-[#4a504c] xl:mt-[max(14px,1.5cqw)] xl:max-w-none xl:text-[length:max(14px,1cqw)] xl:leading-[1.45]">
             {story.tagline ?? study.description}
           </p>
 
-          <dl className="mt-7 flex flex-wrap items-start gap-x-7 gap-y-4 xl:mt-[max(20px,2.8cqw)] xl:flex-nowrap xl:gap-0">
+          <dl className="mt-7 flex flex-wrap items-start gap-x-7 gap-y-4 xl:mt-[max(20px,2.6cqw)] xl:flex-nowrap xl:gap-0 xl:[text-shadow:0_0_2px_rgba(247,244,238,0.9),0_0_10px_rgba(247,244,238,0.85),0_0_18px_rgba(247,244,238,0.6)]">
             {story.meta.map(([term, value], i) => (
               /* Rules between the columns only from xl, where the row never
                  wraps; on a phone it can, and a rule would dangle at the start
                  of the second line. */
               <div
                 key={term}
-                className={`min-w-0 ${i > 0 ? "xl:border-l xl:border-[#141a17]/20 xl:pl-[max(14px,1.6cqw)]" : ""} ${
-                  i < story.meta.length - 1 ? "xl:pr-[max(14px,1.6cqw)]" : ""
+                className={`min-w-0 ${i > 0 ? "xl:border-l xl:border-[#141a17]/20 xl:pl-[max(16px,2cqw)]" : ""} ${
+                  i < story.meta.length - 1 ? "xl:pr-[max(16px,2cqw)]" : ""
                 }`}
               >
-                <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-forest xl:text-[length:max(10px,0.7cqw)] xl:font-medium xl:text-[#5d635f]">
+                <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-forest xl:text-[length:max(10px,0.72cqw)] xl:font-medium xl:text-[#4f5551]">
                   {term}
                 </dt>
-                <dd className="mt-1.5 text-[14px] font-medium leading-[19px] text-ink-primary xl:mt-[max(4px,0.5cqw)] xl:whitespace-nowrap xl:text-[length:max(13px,0.88cqw)] xl:leading-[1.3]">
+                <dd className="mt-1.5 text-[14px] font-medium leading-[19px] text-ink-primary xl:mt-[max(4px,0.5cqw)] xl:whitespace-nowrap xl:text-[length:max(13px,0.9cqw)] xl:leading-[1.3] xl:text-[#141a17]">
                   {value}
                 </dd>
               </div>
@@ -828,7 +987,7 @@ function HeroCover({ study, story, fadeUp, reduce }) {
         </h1>
         {/* The spec's #626762 is a grey for pale grounds; over a darkened photo
             it is barely visible, so the one-liner is white at 80% instead. */}
-        <p className="mt-4 max-w-[620px] text-[16px] leading-[1.6] text-white/80 [text-shadow:0_2px_3px_rgba(8,11,10,0.55)] sm:text-[18px]">
+        <p className="mt-4 max-w-[620px] whitespace-pre-line text-[16px] leading-[1.6] text-white/80 [text-shadow:0_2px_3px_rgba(8,11,10,0.55)] sm:text-[18px]">
           {story.tagline ?? study.description}
         </p>
 
@@ -1010,16 +1169,16 @@ export default function CaseStudyStory({ study, story, onBack }) {
                   {story.numbered !== false && (
                     <p className="text-[14px] font-semibold tabular-nums tracking-[0.14em] text-ink-secondary">{String(i + 1).padStart(2, "0")}</p>
                   )}
-                  {/* Hierarchy, not volume: 20px semibold carries a section
-                      head at this measure without shouting over the body. */}
-                  <h2 className="mt-2.5 font-serif text-[18px] font-semibold leading-[26px] text-ink-primary">{section.title}</h2>
+                  {/* A clear step above the 16–18px subsection and card
+                      heads inside it, so the two levels never read alike. */}
+                  <h2 className="mt-2.5 font-serif text-[24px] font-semibold leading-[32px] tracking-[-0.01em] text-ink-primary lg:text-[28px] lg:leading-[36px]">{section.title}</h2>
                   {section.standfirst && (
-                    <p className="mt-3 max-w-[700px] text-[16px] leading-[1.6] text-ink-secondary">{section.standfirst}</p>
+                    <p className="mt-3 max-w-[700px] text-[16px] leading-[1.6] text-ink-secondary"><Rich text={section.standfirst} /></p>
                   )}
                 </header>
                 <div className="relative z-[1] mt-7 flex flex-col">
                   {section.blocks.map((block, index) => (
-                    <div key={`${section.id}-${index}`} className={blockGap(section.blocks[index - 1]?.type, block.type)}>
+                    <div key={`${section.id}-${index}`} className={block.gap ?? blockGap(section.blocks[index - 1]?.type, block.type)}>
                       <Block block={block} reduce={reduce} />
                     </div>
                   ))}
@@ -1034,17 +1193,6 @@ export default function CaseStudyStory({ study, story, onBack }) {
             carries the way back, so repeating it here only adds noise. */}
         <BrowseProjects currentSlug={study.slug} />
 
-        {/* The header goes back to the case studies; this goes all the way out.
-            No onBack handler: that one steps through history to restore the
-            home scroll position, which is the opposite of "take me to the top". */}
-        <div className="mt-14 border-t border-border pt-8">
-          <a
-            href="#top"
-            className="text-[13px] leading-[20px] inline-flex items-center gap-2 font-medium text-ink-secondary transition-colors hover:text-ink-primary"
-          >
-            <span aria-hidden="true">←</span> Back to Home
-          </a>
-        </div>
         <div className="h-24" />
       </main>
     </div>

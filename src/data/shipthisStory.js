@@ -51,8 +51,8 @@ export const shipthisStory = {
   cover: {
     src: shipthisHeroCover,
     alt: "ShipThis open on a laptop at a container port at sunrise",
-    w: 1983,
-    h: 793,
+    w: 2000,
+    h: 800,
   },
   tagline:
     "Shipthis is a digital platform that helps freight forwarders manage global shipping operations with ease, by automating tasks, tracking shipments, and improving collaboration.",

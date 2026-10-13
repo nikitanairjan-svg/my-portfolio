@@ -8,11 +8,11 @@ inpainted from their surroundings, and softened so the fill reads as the same
 out-of-focus backdrop. Keep boxes tight to the text: foliage or other detail
 inside a box gets smudged too.
 
-Boxes used for the current covers:
-  shipthis     120,170,720,545
-  hc-robotics  95,180,735,425 95,455,615,530
-  ax-flow      115,170,735,540
-  bloom-craft  135,190,775,570
+Boxes used for the current covers (2000x800 masters):
+  shipthis     120,170,710,550
+  hc-robotics  95,185,725,428 95,460,615,530
+  ax-flow      140,205,755,555
+  bloom-craft  135,190,780,572
 """
 import sys, cv2, numpy as np
 from PIL import Image

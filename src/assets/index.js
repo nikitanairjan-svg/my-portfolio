@@ -31,6 +31,30 @@ export { default as axFlowBg } from "../../portfolio-assets/case-studies/ax-flow
 export { default as axFlowHeroCover } from "../../portfolio-assets/case-studies/ax-flow/hero-bg-opt.webp";
 export { default as axFlowVisual1 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual1-opt.webp";
 export { default as axFlowVisual2 } from "../../portfolio-assets/case-studies/ax-flow/ax-flow-visual2-opt.webp";
+export { default as axScreenAsk } from "../../portfolio-assets/case-studies/ax-flow/screens/01-ask.webp";
+export { default as axScreenBalances } from "../../portfolio-assets/case-studies/ax-flow/screens/02-balances.webp";
+export { default as axScreenStart } from "../../portfolio-assets/case-studies/ax-flow/screens/03-start.webp";
+export { default as axScreenType } from "../../portfolio-assets/case-studies/ax-flow/screens/04-type.webp";
+export { default as axScreenDates } from "../../portfolio-assets/case-studies/ax-flow/screens/05-dates.webp";
+export { default as axScreenDetails } from "../../portfolio-assets/case-studies/ax-flow/screens/06-details.webp";
+export { default as axScreenChecking } from "../../portfolio-assets/case-studies/ax-flow/screens/07-checking.webp";
+export { default as axScreenReview } from "../../portfolio-assets/case-studies/ax-flow/screens/08-review.webp";
+export { default as axScreenSubmitted } from "../../portfolio-assets/case-studies/ax-flow/screens/09-submitted.webp";
+export { default as axLibActions } from "../../portfolio-assets/case-studies/ax-flow/library/actions.webp";
+export { default as axLibEdgeCases } from "../../portfolio-assets/case-studies/ax-flow/library/edge-cases.webp";
+export { default as axLibFreeText } from "../../portfolio-assets/case-studies/ax-flow/library/free-text.webp";
+export { default as axLibInformation } from "../../portfolio-assets/case-studies/ax-flow/library/information.webp";
+export { default as axLibMultiLink } from "../../portfolio-assets/case-studies/ax-flow/library/multi-link.webp";
+export { default as axPatSingleBefore } from "../../portfolio-assets/case-studies/ax-flow/library/actions-single-1.webp";
+export { default as axPatSingleAfter } from "../../portfolio-assets/case-studies/ax-flow/library/actions-single-2.webp";
+export { default as axPatStepDate } from "../../portfolio-assets/case-studies/ax-flow/library/actions-step-1.webp";
+export { default as axPatStepTime } from "../../portfolio-assets/case-studies/ax-flow/library/actions-step-2.webp";
+export { default as axPatOffline } from "../../portfolio-assets/case-studies/ax-flow/library/edge-offline.webp";
+export { default as axPatPartial } from "../../portfolio-assets/case-studies/ax-flow/library/edge-partial.webp";
+export { default as axPatPlainText } from "../../portfolio-assets/case-studies/ax-flow/library/info-text.webp";
+export { default as axPatList } from "../../portfolio-assets/case-studies/ax-flow/library/info-list.webp";
+export { default as axPatCard } from "../../portfolio-assets/case-studies/ax-flow/library/info-card.webp";
+export { default as axPatLinks } from "../../portfolio-assets/case-studies/ax-flow/library/multi-link.webp";
 export { default as shipthisBg } from "../../portfolio-assets/case-studies/shipthis/shipthis-bg-opt.webp";
 export { default as shipthisVisual } from "../../portfolio-assets/case-studies/shipthis/shipthis-visual-opt.webp";
 export { default as hcRoboticsBg } from "../../portfolio-assets/case-studies/hc-robotics/hc-robotics-bg-opt.webp";
@@ -66,6 +90,8 @@ export { default as contactClips } from "../../portfolio-assets/contact/contact-
 
 // HC Robotics case study detail page (optimized from the Notion export).
 export { default as hcWorkflow } from "../../portfolio-assets/case-studies/hc-robotics/detail/workflow-trim-opt.webp";
+// how LiDAR scans become mapped poles, as one supplied four-step visual
+export { default as hcProductFlow } from "../../portfolio-assets/case-studies/hc-robotics/detail/product-flow.webp";
 export { default as hcFeatureToolbox } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-toolbox-opt.webp";
 export { default as hcFeatureLayouts } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-layouts-opt.webp";
 export { default as hcFeatureMagnify } from "../../portfolio-assets/case-studies/hc-robotics/detail/feature-magnify-opt.webp";
@@ -119,3 +145,4 @@ export { default as stSc8 } from "../../portfolio-assets/case-studies/shipthis/d
 export { default as stSc9 } from "../../portfolio-assets/case-studies/shipthis/detail/sc-9-opt.webp";
 export { default as stFeatMapQuoteLoop } from "../../portfolio-assets/case-studies/shipthis/detail/feat-map-quote-loop.webp";
 export { default as stFeatViewsLoop } from "../../portfolio-assets/case-studies/shipthis/detail/feat-views-loop.webp";
+export { default as axPatChips } from "../../portfolio-assets/case-studies/ax-flow/library/actions-chips.webp";
